@@ -6,6 +6,7 @@ module.exports = {
     extend: {
       colors: {
         "primary-color": '#0052cc',
+        "second-color": '#f4f5f7',
       },
     },
     minWidth: {

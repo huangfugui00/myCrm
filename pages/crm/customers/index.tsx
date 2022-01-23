@@ -4,9 +4,35 @@ import Mybutton from '@/components/MyButton'
 import DehazeIcon from '@mui/icons-material/Dehaze'; 
 import {IconButton} from '@mui/material'
 import SearchCustomer from './components/SearchCustomer'
-// import MyInput from './components/MyInput'
+import SelCustomer from './components/SelCustomer'
+
+import { gql, useQuery } from '@apollo/client';
+import {customerType} from  'utils/type'
+
+const GET_CUSTOMERS = gql`
+    query customers{
+        customers {
+            _id
+            phone
+            name
+            url
+            nextTime
+            industry
+            principal {
+                username
+                phone
+            }
+        }
+    }
+`
 
 const index = () => {
+    const { loading, error, data } =  useQuery(GET_CUSTOMERS)
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
+        console.log(data)
+    const customers: customerType[] = data.customers 
+   
     return (
         <div>
             <Layout>
@@ -21,9 +47,15 @@ const index = () => {
                         </IconButton>
                         </div>
                     </div>
-                    <div className="flex">
-                        <SearchCustomer placeholder='客户名称/手机/电话'/>
+                    <div className="mt-6">
+                        <div className=" flex  justify-between">
+                            <SearchCustomer placeholder='客户名称/手机/电话'/>
+                            <SelCustomer/>
+                        </div>
                     </div>
+                    {customers.map((customer)=>(
+                        <p>{customer.name}</p>
+                    ))}
                 </main>
             </Layout>
         </div>
