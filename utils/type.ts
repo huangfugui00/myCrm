@@ -48,7 +48,6 @@ export const columns = [
               style:cellStyle
           }
       }
-    //   render: (text: string) => {text},
     },
     {
       title: '电话',

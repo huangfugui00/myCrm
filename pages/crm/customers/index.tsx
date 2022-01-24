@@ -17,6 +17,10 @@ const GET_CUSTOMERS = gql`
             phone
             name
             url
+            email
+            come
+            mobilePhone
+            level
             nextTime
             industry
             principal {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import {customerType,columns} from  'utils/type'
 import {Table ,TableBody,TableHead,TableRow,TableCell,TablePagination}from '@mui/material';
 import moment from 'moment';
@@ -15,15 +15,26 @@ type CustomerTableProp={
 
 const CustomerTable:React.FC<CustomerTableProp> = (props) => {
     const {customers} = props
+    const [rowsPerPage,setRowsPerPage] = useState(5)
+    const [page,setPage] = useState(0)
 
+    const handleChangePage = (event: unknown, newPage: number) => {
+        console.log(newPage)
+        setPage(newPage);
+    };
 
-    const handleChangePage = ()=>{
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+      };
 
-    }
-
-    const handleChangeRowsPerPage = ()=>{
-        
-    }
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - customers.length) : 0;
+    //   先排序
+    let displayCustomers = customers
+    
+    // 再每页显示
+    displayCustomers = displayCustomers.slice(page*rowsPerPage,(page+1)*rowsPerPage)
+    
 
     return (
         <div className="  mt-4">
@@ -47,7 +58,7 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                    {customers.map((customer,index)=>(
+                    {displayCustomers.map((customer,index)=>(
                     <TableRow className={`${index%2 && 'bg-second-color'} hover:bg-blue-100`}>
                         <TableCell><Checkbox/></TableCell>
                         <TableCell className="border-r"><a href="#">{customer.name}</a></TableCell>
@@ -59,17 +70,28 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
                         <TableCell className="border-r">{customer.mobilePhone}</TableCell>
                         <TableCell className="border-r">{customer.level}</TableCell>
                         <TableCell className="border-r">{moment(customer.nextTime).format('MMM DD, YYYY')}</TableCell>
+                        <TableCell className="border-r">{customer.principal.username}</TableCell>
                     </TableRow>
                     ))}
+                     {emptyRows > 0 && (
+                <TableRow
+                  style={{
+                    height: 15*rowsPerPage* emptyRows,
+                  }}
+                >
+                  <TableCell colSpan={6} />
+                </TableRow>
+              )}
                 </TableBody>
             </Table>
             </div>
+
             <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"
                 count={customers.length}
-                rowsPerPage={5}
-                page={1}
+                rowsPerPage={rowsPerPage}
+                page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
