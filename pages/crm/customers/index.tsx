@@ -8,6 +8,7 @@ import SelCustomer from './components/SelCustomer'
 
 import { gql, useQuery } from '@apollo/client';
 import {customerType} from  'utils/type'
+import CustomerTable from './components/CustomerTable'
 
 const GET_CUSTOMERS = gql`
     query customers{
@@ -36,7 +37,7 @@ const index = () => {
     return (
         <div>
             <Layout>
-                <main >
+                <main  className="">
 
                     <div className=" flex justify-between">
                         <span className="text-2xl">客户管理</span>
@@ -53,9 +54,9 @@ const index = () => {
                             <SelCustomer/>
                         </div>
                     </div>
-                    {customers.map((customer)=>(
-                        <p>{customer.name}</p>
-                    ))}
+
+                    <CustomerTable customers={customers}/>
+                  
                 </main>
             </Layout>
         </div>
