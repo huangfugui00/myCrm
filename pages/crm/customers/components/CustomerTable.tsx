@@ -11,11 +11,13 @@ import {Checkbox} from '@mui/material'
 
 
 type CustomerTableProp={
-    customers:customerType[]
+    customers:customerType[],
 }
 
-
-//CUSTOMERS->CONDITION->DISPLAY
+//依赖关系：CUSTOMERS->CONDITION->DISPLAY
+//Customers:外部传入的客户数据，
+//CONDITION：对表进行排序等操作后得到的数据
+//DISPLAY:真正显示的数据
 const CustomerTable:React.FC<CustomerTableProp> = (props) => {
     const {customers} = props
     const [conditionCustomers,setConditionCustomers] = useState<customerType[]>(customers)
@@ -25,6 +27,7 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
     const [rowsPerPage,setRowsPerPage] = useState(5)
     const [page,setPage] = useState(0)
     
+
 
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
@@ -54,7 +57,6 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
            }
         }
         const copyCustomers = [...customers]
-        // console.log(sortCustomers)
         setConditionCustomers( copyCustomers.sort(decenSoftFunc))
         setColumnSort(column)
         setSortDirection('down')
@@ -79,9 +81,8 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
                return 0
            }
         }
-        const copyCustomers = [...customers]
+        const copyCustomers = [...customers]//直接对state进行sort会报错，因为只能通过set方式更改state
        
-        // console.log(sortCustomers)
         setConditionCustomers( copyCustomers.sort(softFunc))
         setColumnSort(column)
         setSortDirection('up')
@@ -90,11 +91,15 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
 
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - customers.length) : 0;
    
+    useEffect(() => {
+        setConditionCustomers(customers)
+        console.log('condition')
+    }, [customers])//condition依赖于customers
     
     useEffect(()=>{
         const sliceCustomers = conditionCustomers.slice(page*rowsPerPage,(page+1)*rowsPerPage)
         setDisplayCustomers(sliceCustomers)
-    },[page,rowsPerPage,conditionCustomers])
+    },[page,rowsPerPage,conditionCustomers])//display依赖于condition
 
 
     return (
