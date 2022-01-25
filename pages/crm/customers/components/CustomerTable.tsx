@@ -1,5 +1,7 @@
 import React,{useState,useEffect} from 'react'
-import {customerType,columns} from  'utils/type'
+import {customerType,columnsDataIndex} from  'utils/type'
+import {columns} from 'utils/data'
+
 import {Table ,TableBody,TableHead,TableRow,TableCell,TablePagination}from '@mui/material';
 import moment from 'moment';
 
@@ -13,13 +15,18 @@ type CustomerTableProp={
 }
 
 
+//CUSTOMERS->CONDITION->DISPLAY
 const CustomerTable:React.FC<CustomerTableProp> = (props) => {
     const {customers} = props
+    const [conditionCustomers,setConditionCustomers] = useState<customerType[]>(customers)
+    const [displayCustomers,setDisplayCustomers] = useState<customerType[]>(customers)
+    const [columnSort,setColumnSort] = useState<columnsDataIndex>()
+    const [sortDirection,setSortDirection] = useState<'down'|'up'>()
     const [rowsPerPage,setRowsPerPage] = useState(5)
     const [page,setPage] = useState(0)
+    
 
     const handleChangePage = (event: unknown, newPage: number) => {
-        console.log(newPage)
         setPage(newPage);
     };
 
@@ -28,13 +35,67 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
         setPage(0);
       };
 
+    const handleDecendSort  = (column:columnsDataIndex)=>{
+        const decenSoftFunc = (a:customerType,b:customerType)=>{
+            let value1,value2
+            if(column==='principal'){
+                value1 = a[column].username
+                value2 = b[column].username
+            }
+            else{
+                value1 = a[column]
+                value2 = b[column]
+            }
+           if( value1 && value2){
+              return value1<value2?1:-1
+           }
+           else{
+               return 0
+           }
+        }
+        const copyCustomers = [...customers]
+        // console.log(sortCustomers)
+        setConditionCustomers( copyCustomers.sort(decenSoftFunc))
+        setColumnSort(column)
+        setSortDirection('down')
+
+    }
+
+    const handleSort  = (column:columnsDataIndex)=>{
+        const softFunc = (a:customerType,b:customerType)=>{
+            let value1,value2
+            if(column==='principal'){
+                value1 = a[column].username
+                value2 = b[column].username
+            }
+            else{
+                value1 = a[column]
+                value2 = b[column]
+            }
+           if( value1 && value2){
+              return value1>value2?1:-1
+           }
+           else{
+               return 0
+           }
+        }
+        const copyCustomers = [...customers]
+       
+        // console.log(sortCustomers)
+        setConditionCustomers( copyCustomers.sort(softFunc))
+        setColumnSort(column)
+        setSortDirection('up')
+
+    }
+
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - customers.length) : 0;
-    //   先排序
-    let displayCustomers = customers
+   
     
-    // 再每页显示
-    displayCustomers = displayCustomers.slice(page*rowsPerPage,(page+1)*rowsPerPage)
-    
+    useEffect(()=>{
+        const sliceCustomers = conditionCustomers.slice(page*rowsPerPage,(page+1)*rowsPerPage)
+        setDisplayCustomers(sliceCustomers)
+    },[page,rowsPerPage,conditionCustomers])
+
 
     return (
         <div className="  mt-4">
@@ -48,9 +109,10 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
                         <div className="flex items-center group leading-8 ">
                             <h2 className="text-gray-500">{column.title}</h2>
                             {/* sort */}
-                            <div className=" items-center hidden  group-hover:flex   group-hover:flex-col">
-                                <ArrowDropUpIcon className="-mb-2 cursor-pointer" sx={{color:'gray'}}/>
-                                <ArrowDropDownIcon className="-mt-2 cursor-pointer" sx={{color:'gray'}}/>
+                            {/* ${columnSort===column.dataIndex && sortDirection === 'up' && ''} */}
+                            <div className={` items-center   group-hover:flex   group-hover:flex-col ${columnSort===column.dataIndex ? 'flex flex-col':'hidden'}`}>
+                                <ArrowDropUpIcon onClick={()=>handleSort(column.dataIndex)} className={` -mb-1 cursor-pointer`} sx={{color:`${columnSort===column.dataIndex && sortDirection === 'up'?'blue':'gray'}`    }}/>
+                                <ArrowDropDownIcon onClick={()=>handleDecendSort(column.dataIndex)} className="-mt-1 cursor-pointer"  sx={{color:`${columnSort===column.dataIndex && sortDirection === 'down'?'blue':'gray'}`}}/>
                             </div>
                         </div>
                     </TableCell>
