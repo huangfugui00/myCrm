@@ -19,10 +19,10 @@ export type customerType={
     mobilePhone?:string,   
     email?:string,
     url?:string,
-    industry:'金融业' | 'IT' |'房地产'|'商业服务'| '政府' | '其他',
-    level: 'A(重点)' | 'B(普通客户)' | 'C(非优先客户)',
-    nextTime:Date,
-    principal:profileType
+    industry?:'金融业' | 'IT' |'房地产'|'商业服务'| '政府' | '其他',
+    level?: 'A(重点)' | 'B(普通客户)' | 'C(非优先客户)',
+    nextTime?:Date,
+    principal?:profileType,
 }
 
 

@@ -19,13 +19,13 @@ module.exports = {
      zIndex: {
       '-1': '-1',
       '-2': '-2',
+      '100':'100',
      }
   },
   variants: {
     extend: {},
   },
   plugins: [
-    // require('tailwind-scrollbar-hide'),
     require('@tailwindcss/line-clamp'),
   ],
 }

@@ -12,6 +12,8 @@ import {Checkbox} from '@mui/material'
 
 type CustomerTableProp={
     customers:customerType[],
+    customerCheckedId:string,
+    handleClickCheckBox:(customerName:string)=>void,
 }
 
 //依赖关系：CUSTOMERS->CONDITION->DISPLAY
@@ -19,14 +21,13 @@ type CustomerTableProp={
 //CONDITION：对表进行排序等操作后得到的数据
 //DISPLAY:真正显示的数据
 const CustomerTable:React.FC<CustomerTableProp> = (props) => {
-    const {customers} = props
+    const {customers,customerCheckedId,handleClickCheckBox} = props
     const [conditionCustomers,setConditionCustomers] = useState<customerType[]>(customers)
     const [displayCustomers,setDisplayCustomers] = useState<customerType[]>(customers)
     const [columnSort,setColumnSort] = useState<columnsDataIndex>()
     const [sortDirection,setSortDirection] = useState<'down'|'up'>()
     const [rowsPerPage,setRowsPerPage] = useState(5)
     const [page,setPage] = useState(0)
-    
 
 
     const handleChangePage = (event: unknown, newPage: number) => {
@@ -42,8 +43,8 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
         const decenSoftFunc = (a:customerType,b:customerType)=>{
             let value1,value2
             if(column==='principal'){
-                value1 = a[column].username
-                value2 = b[column].username
+                value1 = a[column]?.username
+                value2 = b[column]?.username
             }
             else{
                 value1 = a[column]
@@ -60,15 +61,14 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
         setConditionCustomers( copyCustomers.sort(decenSoftFunc))
         setColumnSort(column)
         setSortDirection('down')
-
     }
 
     const handleSort  = (column:columnsDataIndex)=>{
         const softFunc = (a:customerType,b:customerType)=>{
             let value1,value2
             if(column==='principal'){
-                value1 = a[column].username
-                value2 = b[column].username
+                value1 = a[column]?.username
+                value2 = b[column]?.username
             }
             else{
                 value1 = a[column]
@@ -93,7 +93,6 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
    
     useEffect(() => {
         setConditionCustomers(customers)
-        console.log('condition')
     }, [customers])//condition依赖于customers
     
     useEffect(()=>{
@@ -101,14 +100,14 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
         setDisplayCustomers(sliceCustomers)
     },[page,rowsPerPage,conditionCustomers])//display依赖于condition
 
-
+   
     return (
         <div className="  mt-4">
             <div className="overflow-x-scroll">
             <Table > 
-                <TableHead className='border-t'>
-                <TableRow>
-                    <TableCell><Checkbox/></TableCell>
+                <TableHead className='border-t '>
+                <TableRow className="h-20">
+                    <TableCell className="border-r"></TableCell>
                     {columns.map((column,index)=>(
                     <TableCell className={`min-w-[200px] border-r`}  key={column.title}>
                         <div className="flex items-center group leading-8 ">
@@ -127,7 +126,7 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
                 <TableBody>
                     {displayCustomers.map((customer,index)=>(
                     <TableRow className={`${index%2 && 'bg-second-color'} hover:bg-blue-100`}>
-                        <TableCell><Checkbox/></TableCell>
+                        <TableCell className="border-r"><Checkbox  checked={customerCheckedId===customer._id?true:false} onClick={()=>handleClickCheckBox(customer._id)}/></TableCell>
                         <TableCell className="border-r"><a href="#">{customer.name}</a></TableCell>
                         <TableCell className="border-r">{customer.phone}</TableCell>
                         <TableCell className="border-r">{customer.email}</TableCell>
@@ -137,7 +136,7 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
                         <TableCell className="border-r">{customer.mobilePhone}</TableCell>
                         <TableCell className="border-r">{customer.level}</TableCell>
                         <TableCell className="border-r">{moment(customer.nextTime).format('MMM DD, YYYY')}</TableCell>
-                        <TableCell className="border-r">{customer.principal.username}</TableCell>
+                        <TableCell className="border-r">{customer.principal?.username}</TableCell>
                     </TableRow>
                     ))}
                      {emptyRows > 0 && (
