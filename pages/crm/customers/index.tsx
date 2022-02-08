@@ -27,11 +27,11 @@ const index = () => {
     // //右侧button组
     const {  data } =  useQuery(GET_CUSTOMERS)
     const [deleteCustomer, { loading, error }]  = useMutation(DELETE_CUSTOMER)
-    // if (loading) return <p>Loading...</p>;
-    // if (error) return <p>Error :(</p>;
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error :(</p>;
     useEffect(() => {
       if(data){
-          console.log('fetch data form graphql')
+        //   console.log('fetch data form graphql')
           let copyCustomers:customerType[] = data.customers
         setCustomers(copyCustomers)
       }
@@ -80,10 +80,23 @@ const index = () => {
         return false
     }
 
-
+    
     const handleDelete = ()=>{
         if(customerCheckedId){
-            deleteCustomer( {variables:{id:customerCheckedId}})
+            deleteCustomer( {
+                variables:{id:customerCheckedId},
+                update: (store, { data })=>{
+                    const customerData:any = store.readQuery({
+                        query: GET_CUSTOMERS
+                        });
+                    store.writeQuery({
+                        query: GET_CUSTOMERS,
+                        data: {
+                            customers: customerData!.customers.filter((customer:any)=>customer._id!==data.deleteCustomer._id)
+                        }
+                    });
+                }
+            })
         }
     }
    
