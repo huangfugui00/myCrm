@@ -10,6 +10,9 @@ import {useQuery ,useMutation} from '@apollo/client';
 import {customerType} from  'utils/type'
 import {GET_CUSTOMERS,DELETE_CUSTOMER} from 'utils/graphql'
 import CustomerTable from './components/CustomerTable'
+import EditCustomer from './components/EditCustomer'
+import Modal from '@mui/material/Modal';
+import MyModal from '@/components/MyModal'
 
 
 
@@ -23,15 +26,14 @@ const index = () => {
     const [customers,setCustomers] = useState<customerType[]>([])
     const [customersApi,setCustomersApi] = useState<customerType[]>([])
     const [customerCheckedId,setCustomerCheckedId] = useState('')
+    const [open,handleClose] = useState(false)
     
     // //右侧button组
     const {  data } =  useQuery(GET_CUSTOMERS)
     const [deleteCustomer, { loading, error }]  = useMutation(DELETE_CUSTOMER)
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :(</p>;
+   
     useEffect(() => {
       if(data){
-        //   console.log('fetch data form graphql')
           let copyCustomers:customerType[] = data.customers
         setCustomers(copyCustomers)
       }
@@ -83,6 +85,7 @@ const index = () => {
     
     const handleDelete = ()=>{
         if(customerCheckedId){
+            console.log('delete')
             deleteCustomer( {
                 variables:{id:customerCheckedId},
                 update: (store, { data })=>{
@@ -92,17 +95,21 @@ const index = () => {
                     store.writeQuery({
                         query: GET_CUSTOMERS,
                         data: {
-                            customers: customerData!.customers.filter((customer:any)=>customer._id!==data.deleteCustomer._id)
+                            customers: customerData.customers.filter((customer:any)=>customer._id!==data.deleteCustomer._id)
                         }
                     });
                 }
             })
+            console.log('delete finish')
         }
     }
    
    if(!customers){
        return<></>
    }
+
+    // if (loading) return <p>Loading...</p>;
+    // if (error) return <p>Error :(</p>;
    
    
     return (
@@ -123,7 +130,7 @@ const index = () => {
                         {
                         customerCheckedId?
                         <div className="flex items-center gap-2 h-9">
-                            <Mybutton className="bg-primary-color text-white text-sm px-3 py-2 rounded">编辑</Mybutton>
+                            <Mybutton onClick={()=>handleClose(true)}className="bg-primary-color text-white text-sm px-3 py-2 rounded">编辑</Mybutton>
                             <Mybutton onClick={()=>handleDelete()} className="bg-red-700  text-white text-sm px-3 py-2 rounded">删除</Mybutton>
                         </div>
                         :
@@ -136,7 +143,11 @@ const index = () => {
                     </div>
 
                     <CustomerTable customers={customersApi} handleClickCheckBox={handleClickCheckBox} customerCheckedId={customerCheckedId}/>
-                  
+                    
+                    <MyModal open={open} handleClose={()=>handleClose(false)}>
+                        <EditCustomer customer={customersApi.find(customer=>customer._id===customerCheckedId)}/>
+                    </MyModal>
+                   
                 </main>
             </Layout>
         </div>

@@ -31,3 +31,12 @@ mutation removeCustomer($id: String!) {
   }
   
 `
+
+export const UPDATE_CUSTOMER = gql`
+mutation updateCustomer($id:String!){
+    updateCustomer(id:$id){
+        phone,
+        name,
+    }
+}
+`
