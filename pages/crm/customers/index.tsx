@@ -8,22 +8,13 @@ import SelCustomer from './components/SelCustomer'
 
 import {useQuery ,useMutation} from '@apollo/client';
 import {customerType} from  'utils/type'
-import {GET_CUSTOMERS,DELETE_CUSTOMER} from 'utils/graphql'
+import {GET_CUSTOMERS,DELETE_CUSTOMER,UPDATE_CUSTOMER} from 'utils/graphql'
 import CustomerTable from './components/CustomerTable'
 import EditCustomer from './components/EditCustomer'
 import MyModal from '@/components/MyModal'
-import { useDispatch, useSelector } from 'react-redux'
-import {getCustomers } from 'actions/customerAct'
-import {IRootState} from 'store'
-
-
-
-
 
 
 const index = () => {
-    const dispatch = useDispatch()
-    const customerReducer = useSelector((state:IRootState) => state.customerReducer)
     const [searchItem,setSearchItem] = useState<string>('')
     const [btnCustomerType,setBtnCustomerType] = useState<'all' | 'my' | 'subordinate' >('all')
     const [customers,setCustomers] = useState<customerType[]>([])
@@ -34,8 +25,8 @@ const index = () => {
     // //右侧button组
     const {  data } =  useQuery(GET_CUSTOMERS)
    
-    const [deleteCustomer, { loading, error }]  = useMutation(DELETE_CUSTOMER)
-   
+    const [deleteCustomer]  = useMutation(DELETE_CUSTOMER)
+    const [updateCustomer]  = useMutation(UPDATE_CUSTOMER)
     useEffect(() => {
       if(data){
         let copyCustomers:customerType[] = data.customers
@@ -83,10 +74,15 @@ const index = () => {
         return false
     }
 
+    const handleUpdate = (customer:customerType)=>{
+        updateCustomer( {
+            variables:{...customer},
+        })
+        handleClose(false)
+    }
     
     const handleDelete = ()=>{
         if(customerCheckedId){
-            console.log('delete')
             deleteCustomer( {
                 variables:{id:customerCheckedId},
                 update: (store, { data })=>{
@@ -101,14 +97,12 @@ const index = () => {
                     });
                 }
             })
-            console.log('delete finish')
         }
     }
    
    if(!customers){
        return<></>
    }
-
     // if (loading) return <p>Loading...</p>;
     // if (error) return <p>Error :(</p>;
    
@@ -146,7 +140,7 @@ const index = () => {
                     <CustomerTable customers={customersApi} handleClickCheckBox={handleClickCheckBox} customerCheckedId={customerCheckedId}/>
                     
                     <MyModal open={open} handleClose={()=>handleClose(false)}>
-                        <EditCustomer customer={customersApi.find(customer=>customer._id===customerCheckedId)}/>
+                        <EditCustomer customer={customersApi.find(customer=>customer._id===customerCheckedId)} handleUpdate={handleUpdate}/>
                     </MyModal>
                    
                 </main>
