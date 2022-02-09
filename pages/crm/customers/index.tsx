@@ -11,8 +11,10 @@ import {customerType} from  'utils/type'
 import {GET_CUSTOMERS,DELETE_CUSTOMER} from 'utils/graphql'
 import CustomerTable from './components/CustomerTable'
 import EditCustomer from './components/EditCustomer'
-import Modal from '@mui/material/Modal';
 import MyModal from '@/components/MyModal'
+import { useDispatch, useSelector } from 'react-redux'
+import {getCustomers } from 'actions/customerAct'
+import {IRootState} from 'store'
 
 
 
@@ -20,21 +22,23 @@ import MyModal from '@/components/MyModal'
 
 
 const index = () => {
-
+    const dispatch = useDispatch()
+    const customerReducer = useSelector((state:IRootState) => state.customerReducer)
     const [searchItem,setSearchItem] = useState<string>('')
     const [btnCustomerType,setBtnCustomerType] = useState<'all' | 'my' | 'subordinate' >('all')
     const [customers,setCustomers] = useState<customerType[]>([])
     const [customersApi,setCustomersApi] = useState<customerType[]>([])
     const [customerCheckedId,setCustomerCheckedId] = useState('')
     const [open,handleClose] = useState(false)
-    
+
     // //右侧button组
     const {  data } =  useQuery(GET_CUSTOMERS)
+   
     const [deleteCustomer, { loading, error }]  = useMutation(DELETE_CUSTOMER)
    
     useEffect(() => {
       if(data){
-          let copyCustomers:customerType[] = data.customers
+        let copyCustomers:customerType[] = data.customers
         setCustomers(copyCustomers)
       }
     }, [data])
@@ -64,9 +68,6 @@ const index = () => {
             setBtnCustomerType(nextBtnCustomerType)
         }
     }
-
-
-
  
     
     const filterCustomType = (customer:customerType) :boolean=>{

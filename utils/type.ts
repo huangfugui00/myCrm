@@ -24,6 +24,8 @@ export type customerType={
     mobilePhone?:string,   
     email?:string,
     url?:string,
+    address?:string,
+    remark?:string,
     industry?:industryType,
     level?: levelType,
     nextTime?:Date,
@@ -32,4 +34,5 @@ export type customerType={
 
 
  
-export type columnsDataIndex = "name" | 'phone' | 'email' | 'url' | 'industry' | 'come' | 'mobilePhone' | "level" | 'nextTime' | 'principal'
+export type columnsDataIndex = "name" | 'phone' | 'email' | 'url' | 'industry' | 'come' | 'mobilePhone' | "level" | 'nextTime' | 'principal' | 'address' | 'remark'
+

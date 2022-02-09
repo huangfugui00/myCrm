@@ -92,15 +92,14 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - customers.length) : 0;
    
     useEffect(() => {
-        setConditionCustomers(customers)
+        setConditionCustomers(customers)    
     }, [customers])//condition依赖于customers
     
     useEffect(()=>{
         const sliceCustomers = conditionCustomers.slice(page*rowsPerPage,(page+1)*rowsPerPage)
         setDisplayCustomers(sliceCustomers)
     },[page,rowsPerPage,conditionCustomers])//display依赖于condition
-
-   
+    // console.log(displayCustomers)
     return (
         <div className="  mt-4">
             <div className="overflow-x-scroll">
@@ -137,6 +136,8 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
                         <TableCell className="border-r">{customer.level}</TableCell>
                         <TableCell className="border-r">{moment(customer.nextTime).format('MMM DD, YYYY')}</TableCell>
                         <TableCell className="border-r">{customer.principal?.username}</TableCell>
+                        <TableCell className="border-r">{customer.address}</TableCell>
+                        <TableCell className="border-r">{customer.remark}</TableCell>
                     </TableRow>
                     ))}
                      {emptyRows > 0 && (

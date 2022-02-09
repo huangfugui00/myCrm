@@ -54,9 +54,14 @@ export const columns:columnsProp[] = [
         dataIndex:'principal',
 
     },
-   
-   
-
+    {
+        title:'地址',
+        dataIndex:'address',
+    },
+    {
+        title:'备注',
+        dataIndex:'remark',
+    }
   ];
 
 

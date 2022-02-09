@@ -1,7 +1,11 @@
 import React,{useState} from 'react'
 import {customerType} from 'utils/type'
-import {come} from 'utils/data'
+import {come,industry,level} from 'utils/data'
+import {UPDATE_CUSTOMER,GET_CUSTOMERS} from 'utils/graphql'
 import { useForm,SubmitHandler } from 'react-hook-form';
+import {useMutation} from '@apollo/client';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 type EditCustomerProp={
     customer:customerType | undefined
 }
@@ -10,6 +14,7 @@ type Inputs = {
     name: string,
     phone:string,
     mobilePhone:string,
+    email:string,
   };
   
 
@@ -18,6 +23,7 @@ const EditCustomer:React.FC<EditCustomerProp> = (props) => {
     if (!customer){
         return<></>
     }
+    const [updateCustomer, { loading, error }]  = useMutation(UPDATE_CUSTOMER)
 
     const [localCustomer,setLocalCustomer]=useState(customer)   
     const className =" py-1 pl-1 rounded text-gray-500 bg-gray-100 text-sm outline-none border focus:border-blue-200 w-96"
@@ -28,10 +34,25 @@ const EditCustomer:React.FC<EditCustomerProp> = (props) => {
         formState: { errors },
       } = useForm<Inputs>();
 
-    const onSubmit:SubmitHandler<Inputs>=data=>{
-        console.log(data)
+    const onSubmit:SubmitHandler<Inputs>=()=>{
+        updateCustomer( {
+            variables:{id:localCustomer._id,...localCustomer},
+            update: (store, { data })=>{
+                const customerData:any = store.readQuery({
+                    query: GET_CUSTOMERS
+                    });
+                store.writeQuery({
+                    query: GET_CUSTOMERS,
+                    data: {
+                        customers: customerData.customers.map((customer:any)=>customer._id!==data.updateCustomer._id?customer:data.updateCustomer)
+                    }
+                });
+            }
+        })
+
+        console.log(456)
     }
-    
+    const [startDate, setStartDate] = useState(new Date());
     return (
         <div className="bg-white p-8">
             {/* header  */}
@@ -92,9 +113,81 @@ const EditCustomer:React.FC<EditCustomerProp> = (props) => {
                             </p>
                         </div>      
                     </div>
-
-
                     
+                    <div className="flex gap-8 ">
+                        <div>
+                            <p className="text-sm text-gray-500 mb-1">邮箱</p>
+                            <input value={localCustomer.email} 
+                            {...register("email",{ pattern:/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,})} 
+                            className={className}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalCustomer({...localCustomer,email:e.target.value})}
+                            />
+                            <p className="text-sm text-red-500">
+                            {errors.email && <span>email pattern is wrong</span>}
+                            </p>
+                        </div>
+                        <div>
+                            <p className="text-sm text-gray-500 mb-1">网址</p>
+                            <input value={localCustomer.url} 
+                            className={className}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalCustomer({...localCustomer,url:e.target.value})}
+                            />
+                        </div>      
+                    </div>
+
+                    <div className="flex gap-8 ">
+                        <div>
+                            <p className="text-sm text-gray-500 mb-1">客户行业</p>
+                            <select className={className}
+                            value={localCustomer.industry}
+                            onChange={(e:React.ChangeEvent<HTMLSelectElement>)=>setLocalCustomer({...localCustomer,industry:e.target.value as typeof industry[number]})}
+                            >
+                                <option></option>
+                                {
+                                    industry.map(x=>
+                                        <option value={x}>{x}</option>
+                                    )
+                                }
+                            </select>
+                        </div>
+                        <div>
+                            <p className="text-sm text-gray-500 mb-1">客户级别</p>
+                            <select className={`${className} `}
+                            value={localCustomer.level}
+                            onChange={(e:React.ChangeEvent<HTMLSelectElement>)=>setLocalCustomer({...localCustomer,level:e.target.value as typeof level[number]})}
+                            
+                            >
+                                <option></option>
+                                {
+                                    level.map(x=>
+                                        <option value={x}>{x}</option>
+                                    )
+                                }
+                            </select>
+                        </div>      
+                    </div>
+
+                    <div className="flex gap-8 ">
+                        <div>
+                            <p className="text-sm text-gray-500 mb-1">地址</p>
+                            <input value={localCustomer.address} 
+                            className={className}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalCustomer({...localCustomer,address:e.target.value})}
+                            />
+                           
+                        </div>
+                        <div>
+                            <p className="text-sm text-gray-500 mb-1">备注</p>
+                            <input value={localCustomer.remark} 
+                            className={className}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalCustomer({...localCustomer,remark:e.target.value})}
+                            />
+                        </div>      
+                    </div>
+                    <div>
+                        <p className="text-sm text-gray-500 mb-1">下次联系时间</p>
+                        <DatePicker className={className} selected={startDate} onChange={(date) =>date? setStartDate(date):console.log('1')} />
+                    </div>
 
                 </div>
                 <div className="mt-8">
