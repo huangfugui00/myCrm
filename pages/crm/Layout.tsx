@@ -4,7 +4,7 @@ import StickyTop from '@/components/StickyTop'
 import { useDispatch, useSelector } from 'react-redux'
 import {IRootState} from 'utils/store'
 import {useRouter} from 'next/router'
-
+import {ToastAlert,toastAlert} from '@/components/ToastAlert'
 
 const navLists=[
     {
@@ -41,6 +41,7 @@ const Layout:React.FC<LayoutProp> = (props) => {
             <div className="p-4">
             {props.children}
             </div>
+            <ToastAlert/>        
         </div>
     )
 }

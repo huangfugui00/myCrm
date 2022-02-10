@@ -13,7 +13,7 @@ import CustomerTable from './components/CustomerTable'
 import EditCustomer from './components/EditCustomer'
 import CreateCustomer from './components/CreateCustomer'
 import MyModal from '@/components/MyModal'
-
+import {toastAlert} from '@/components/ToastAlert'
  
 const index = () => {
     const [searchItem,setSearchItem] = useState<string>('')
@@ -77,29 +77,40 @@ const index = () => {
         return false
     }
 
-    const handleUpdate = (customer:customerType)=>{
-        updateCustomer( {
-            variables:{...customer},
-        })
+    const handleUpdate =async (customer:customerType)=>{
+        try{
+            await updateCustomer( {
+                variables:{...customer},
+            })
+        }
+        catch(err:any){
+            toastAlert(err.message) 
+        }
         handleClose(false)
     }
     
-    const handleDelete = ()=>{
-        if(customerCheckedId){
-            deleteCustomer( {
-                variables:{id:customerCheckedId},
-                update: (store, { data })=>{
-                    const customerData:any = store.readQuery({
-                        query: GET_CUSTOMERS
+    const handleDelete =async()=>{
+        try{
+            if(customerCheckedId){
+                console.log('delete customer')
+              await  deleteCustomer( {
+                    variables:{_id:customerCheckedId},
+                    update: (store, { data })=>{
+                        const customerData:any = store.readQuery({
+                            query: GET_CUSTOMERS
+                            });
+                        store.writeQuery({
+                            query: GET_CUSTOMERS,
+                            data: {
+                                getCustomers: customerData.getCustomers.filter((customer:any)=>customer._id!==data.deleteCustomer._id)
+                            }
                         });
-                    store.writeQuery({
-                        query: GET_CUSTOMERS,
-                        data: {
-                            customers: customerData.customers.filter((customer:any)=>customer._id!==data.deleteCustomer._id)
-                        }
-                    });
-                }
-            })
+                    }
+                })
+            }
+        }
+        catch(err:any){
+            toastAlert(err.message) 
         }
     }
    
@@ -113,11 +124,11 @@ const index = () => {
     return (
         <div>
             <Layout>
-                <main  className="">
+                <main>
 
                     <div className=" flex justify-between">
                         <span className="text-2xl">客户管理</span>
-                        <div className="flex items-center">
+                        <div className="flex  items-center">
                         <Mybutton onClick={()=>handleOpenCreate(true)} className="bg-primary-color text-white text-sm px-3 py-2 rounded">新建客户</Mybutton>
                         <IconButton>
                             <DehazeIcon/>
@@ -149,6 +160,7 @@ const index = () => {
                     <MyModal open={openCreate} handleClose={()=>handleOpenCreate(false)}>
                         <CreateCustomer />
                     </MyModal>
+
                 </main>
             </Layout>
         </div>

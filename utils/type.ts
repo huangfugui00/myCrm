@@ -10,6 +10,9 @@ export type profileType = {
     phone:string,
 }
 
+export type userType = {
+    username:string,
+}
 
 type comeType = typeof come[number];
 type industryType = typeof industry[number]
@@ -29,7 +32,7 @@ export type customerType={
     industry?:industryType,
     level?: levelType,
     nextTime?:Date,
-    principal?:profileType,
+    principal?:userType,
 }
 
 

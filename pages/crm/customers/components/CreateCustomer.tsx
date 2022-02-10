@@ -2,6 +2,9 @@ import React ,{useState}from 'react'
 import { useForm,SubmitHandler } from 'react-hook-form';
 import { customerType } from 'utils/type';
 import {come,industry,level} from 'utils/data'
+import {useMutation} from '@apollo/client';
+import {CREATE_CUSTOMERS,GET_CUSTOMERS} from 'utils/graphql'
+import {toastAlert} from '@/components/ToastAlert'
 type Inputs = {
     name: string,
     phone:string,
@@ -24,8 +27,31 @@ const CreateCustomer = () => {
         _id:'',
     }
     const [localCustomer,setLocalCustomer]=useState<customerType>(initCustomer)  
+    const [createCustomer] = useMutation(CREATE_CUSTOMERS)
 
-    const onSubmit:SubmitHandler<Inputs>=()=>{
+    const onSubmit:SubmitHandler<Inputs>=async ()=>{
+        try {
+            await createCustomer({
+                variables:{...localCustomer},
+                update: (store, { data })=>{
+                    const customerData:any = store.readQuery({
+                        query: GET_CUSTOMERS
+                        });
+                    store.writeQuery({
+                        query: GET_CUSTOMERS,
+                        data: {
+                            getCustomers: customerData.getCustomers.concat(data.createCustomer)
+                        }
+                    });
+                }
+            })
+            
+            
+        } catch (error:any) {
+            toastAlert(error.message)             
+        }
+
+
         // handleUpdate(localCustomer)
     }
     return (

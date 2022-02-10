@@ -37,13 +37,14 @@ const Login = () => {
                  variables:{...data},
              })
             const token = result.data.login.token
+            console.log(token) 
             localStorage.setItem('token', token)
              dispatch(loginAct(token))
             router.push('/crm/workbench')
         }
         catch(err:any){
             toastAlert(err.message)
-        }
+        } 
         
     }
     const className =" py-1 pl-1 rounded text-gray-500 bg-gray-100 text-sm outline-none border focus:border-blue-200 w-96"
