@@ -14,7 +14,7 @@ import EditCustomer from './components/EditCustomer'
 import CreateCustomer from './components/CreateCustomer'
 import MyModal from '@/components/MyModal'
 
-
+ 
 const index = () => {
     const [searchItem,setSearchItem] = useState<string>('')
     const [btnCustomerType,setBtnCustomerType] = useState<'all' | 'my' | 'subordinate' >('all')

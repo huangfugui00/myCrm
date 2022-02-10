@@ -9,6 +9,8 @@ import {
   ApolloProvider,
   createHttpLink,
 } from "@apollo/client";
+import store from 'store'
+import { Provider } from 'react-redux'
 import { setContext } from '@apollo/client/link/context';
 
 const httpLink = createHttpLink({
@@ -48,7 +50,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ApolloProvider client={client}>
+    <Provider store={store}>
       <Component {...pageProps} />
+    </Provider>
     </ApolloProvider>
   )
 }

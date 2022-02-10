@@ -5,6 +5,11 @@ import Logo from '@/components/Logo'
 import {ToastAlert,toastAlert} from '@/components/ToastAlert'
 import {LOGIN} from 'utils/graphql'
 import {useMutation} from '@apollo/client';
+import { useDispatch, useSelector } from 'react-redux'
+import {IRootState} from 'utils/store'
+import { loginAct } from 'actions/authAct'
+
+
 // import {userContext} from '../../App'
 // import userServices from '../../services/user'
 // import './login.scss'
@@ -15,12 +20,14 @@ type Inputs = {
 }
 
 const Login = () => {
-    useEffect(() => {
-        // if(user.islogin){
-        //     router.push('/')
-        // }
-    }, [])
     const router = useRouter()
+    const dispatch = useDispatch()
+    const authReducer = useSelector((state:IRootState) => state.authReducer)
+    const { token } = authReducer
+    if(token){
+        router.push('/crm/workbench')
+    }
+    
     const [loginSer]  = useMutation(LOGIN)
     const { handleSubmit, register, formState: { errors },reset } = useForm<Inputs>();
 
@@ -31,6 +38,7 @@ const Login = () => {
              })
             const token = result.data.login.token
             localStorage.setItem('token', token)
+             dispatch(loginAct(token))
             router.push('/crm/workbench')
         }
         catch(err:any){

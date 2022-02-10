@@ -56,7 +56,6 @@ mutation updateCustomer($_id:ID!,$name:String,$phone:String,$come:String,
                 remark
                 principal {
                     username
-                    phone
                 }
     }
 }
