@@ -1,44 +1,33 @@
-import React,{useState} from 'react'
-import {customerType} from 'utils/type'
-import {come,industry,level} from 'utils/data'
+import React ,{useState}from 'react'
 import { useForm,SubmitHandler } from 'react-hook-form';
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-type EditCustomerProp={
-    customer:customerType | undefined,
-    handleUpdate:(customer:customerType)=>void
-}
-
+import { customerType } from 'utils/type';
+import {come,industry,level} from 'utils/data'
 type Inputs = {
     name: string,
     phone:string,
     mobilePhone:string,
     email:string,
   };
-  
 
-const EditCustomer:React.FC<EditCustomerProp> = (props) => {
-    const {customer,handleUpdate} = props
-    if (!customer){
-        return<></>
-    }
-    // const [updateCustomer, { loading, error }]  = useMutation(UPDATE_CUSTOMER)
+const CreateCustomer = () => {
 
-    const [localCustomer,setLocalCustomer]=useState(customer)   
     const className =" py-1 pl-1 rounded text-gray-500 bg-gray-100 text-sm outline-none border focus:border-blue-200 w-96"
-
     const {
         register,
         handleSubmit,
         formState: { errors },
       } = useForm<Inputs>();
 
-    const onSubmit:SubmitHandler<Inputs>=(data)=>{
-        const result = handleUpdate(localCustomer)
-      
+    const initCustomer = {
+        key:'',
+        name:'',
+        _id:'',
     }
+    const [localCustomer,setLocalCustomer]=useState<customerType>(initCustomer)  
 
-
+    const onSubmit:SubmitHandler<Inputs>=()=>{
+        // handleUpdate(localCustomer)
+    }
     return (
         <div className="bg-white p-8">
             {/* header  */}
@@ -189,4 +178,4 @@ const EditCustomer:React.FC<EditCustomerProp> = (props) => {
     )
 }
 
-export default EditCustomer
+export default CreateCustomer

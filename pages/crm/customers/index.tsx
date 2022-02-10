@@ -11,6 +11,7 @@ import {customerType} from  'utils/type'
 import {GET_CUSTOMERS,DELETE_CUSTOMER,UPDATE_CUSTOMER} from 'utils/graphql'
 import CustomerTable from './components/CustomerTable'
 import EditCustomer from './components/EditCustomer'
+import CreateCustomer from './components/CreateCustomer'
 import MyModal from '@/components/MyModal'
 
 
@@ -21,6 +22,7 @@ const index = () => {
     const [customersApi,setCustomersApi] = useState<customerType[]>([])
     const [customerCheckedId,setCustomerCheckedId] = useState('')
     const [open,handleClose] = useState(false)
+    const [openCreate,handleOpenCreate] = useState(false)
 
     // //右侧button组
     const {  data } =  useQuery(GET_CUSTOMERS)
@@ -29,7 +31,8 @@ const index = () => {
     const [updateCustomer]  = useMutation(UPDATE_CUSTOMER)
     useEffect(() => {
       if(data){
-        let copyCustomers:customerType[] = data.customers
+        console.log(data)
+        let copyCustomers:customerType[] = data.getCustomers
         setCustomers(copyCustomers)
       }
     }, [data])
@@ -115,7 +118,7 @@ const index = () => {
                     <div className=" flex justify-between">
                         <span className="text-2xl">客户管理</span>
                         <div className="flex items-center">
-                        <Mybutton className="bg-primary-color text-white text-sm px-3 py-2 rounded">新建客户</Mybutton>
+                        <Mybutton onClick={()=>handleOpenCreate(true)} className="bg-primary-color text-white text-sm px-3 py-2 rounded">新建客户</Mybutton>
                         <IconButton>
                             <DehazeIcon/>
                         </IconButton>
@@ -125,7 +128,7 @@ const index = () => {
                         {
                         customerCheckedId?
                         <div className="flex items-center gap-2 h-9">
-                            <Mybutton onClick={()=>handleClose(true)}className="bg-primary-color text-white text-sm px-3 py-2 rounded">编辑</Mybutton>
+                            <Mybutton onClick={()=>handleClose(true)} className="bg-primary-color text-white text-sm px-3 py-2 rounded">编辑</Mybutton>
                             <Mybutton onClick={()=>handleDelete()} className="bg-red-700  text-white text-sm px-3 py-2 rounded">删除</Mybutton>
                         </div>
                         :
@@ -143,6 +146,9 @@ const index = () => {
                         <EditCustomer customer={customersApi.find(customer=>customer._id===customerCheckedId)} handleUpdate={handleUpdate}/>
                     </MyModal>
                    
+                    <MyModal open={openCreate} handleClose={()=>handleOpenCreate(false)}>
+                        <CreateCustomer />
+                    </MyModal>
                 </main>
             </Layout>
         </div>
