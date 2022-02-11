@@ -34,9 +34,9 @@ const Layout:React.FC<LayoutProp> = (props) => {
     return (
         <div>
             <StickyTop>
-            <div className=" py-4 border-b ">
-                <Header navLists={navLists}/>
-            </div>
+                <div className=" py-4 border-b ">
+                    <Header navLists={navLists}/>
+                </div>
             </StickyTop>
             <div className="p-4">
             {props.children}

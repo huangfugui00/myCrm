@@ -37,31 +37,6 @@ const CreateCustomer:React.FC<CreaateCustomerProp> = (props) => {
     }
 
 
-    // const onSubmit:SubmitHandler<Inputs>=async ()=>{
-    //     try {
-    //         await createCustomer({
-    //             variables:{...localCustomer},
-    //             update: (store, { data })=>{
-    //                 const customerData:any = store.readQuery({
-    //                     query: GET_CUSTOMERS
-    //                     });
-    //                 store.writeQuery({
-    //                     query: GET_CUSTOMERS,
-    //                     data: {
-    //                         getCustomers: customerData.getCustomers.concat(data.createCustomer)
-    //                     }
-    //                 });
-    //             }
-    //         })
-            
-            
-    //     } catch (error:any) {
-    //         toastAlert(error.message)             
-    //     }
-
-
-    //     // handleUpdate(localCustomer)
-    // }
     return (
         <div className="bg-white p-8">
             {/* header  */}

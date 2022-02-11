@@ -1,7 +1,6 @@
 import 'tailwindcss/tailwind.css'
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
-import {useEffect} from 'react'
 import { useRouter } from 'next/router'
 import {
   ApolloClient,
@@ -14,8 +13,10 @@ import {store,persistor} from 'store'
 import { Provider } from 'react-redux'
 import { setContext } from '@apollo/client/link/context';
 
+console.log(process.env.server_url)
 const httpLink = createHttpLink({
-  uri: 'http://localhost:3001/graphql',
+  // uri: 'http://localhost:3001/graphql',
+  uri:process.env.server_url,
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -37,14 +38,6 @@ const client = new ApolloClient({
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter()
-
-  // useEffect(() => {
-  //   router.events.on('routeChangeStart', (url, { shallow }) => {
-  //     console.log(`App is changing to ${url}`)
-  //   })
-  //   // If the component is unmounted, unsubscribe
-  //   // from the event with the `off` method:
-  // }, [])
 
   return (
     <ApolloProvider client={client}>
