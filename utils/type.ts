@@ -6,12 +6,19 @@ export type navItemType = {
 
 
 export type profileType = {
-    username:string,
     phone:string,
 }
 
 export type userType = {
     username:string,
+    _id:string,
+    roles:string[],
+    email:string,
+}
+
+export type authType={
+    token:string,
+    user:userType
 }
 
 type comeType = typeof come[number];

@@ -12,9 +12,13 @@ type Inputs = {
     email:string,
   };
 
-const CreateCustomer = () => {
+type CreaateCustomerProp={
+    handleCreate:(customer:customerType)=>void
+}
 
-    const className =" py-1 pl-1 rounded text-gray-500 bg-gray-100 text-sm outline-none border focus:border-blue-200 w-96"
+const CreateCustomer:React.FC<CreaateCustomerProp> = (props) => {
+    const {handleCreate} = props
+    const className ="py-1 pl-1 rounded text-gray-500 bg-gray-100 text-sm outline-none border focus:border-blue-200 w-96"
     const {
         register,
         handleSubmit,
@@ -27,33 +31,37 @@ const CreateCustomer = () => {
         _id:'',
     }
     const [localCustomer,setLocalCustomer]=useState<customerType>(initCustomer)  
-    const [createCustomer] = useMutation(CREATE_CUSTOMERS)
 
-    const onSubmit:SubmitHandler<Inputs>=async ()=>{
-        try {
-            await createCustomer({
-                variables:{...localCustomer},
-                update: (store, { data })=>{
-                    const customerData:any = store.readQuery({
-                        query: GET_CUSTOMERS
-                        });
-                    store.writeQuery({
-                        query: GET_CUSTOMERS,
-                        data: {
-                            getCustomers: customerData.getCustomers.concat(data.createCustomer)
-                        }
-                    });
-                }
-            })
-            
-            
-        } catch (error:any) {
-            toastAlert(error.message)             
-        }
-
-
-        // handleUpdate(localCustomer)
+    const onSubmit:SubmitHandler<Inputs>=(data)=>{
+        handleCreate(localCustomer)
     }
+
+
+    // const onSubmit:SubmitHandler<Inputs>=async ()=>{
+    //     try {
+    //         await createCustomer({
+    //             variables:{...localCustomer},
+    //             update: (store, { data })=>{
+    //                 const customerData:any = store.readQuery({
+    //                     query: GET_CUSTOMERS
+    //                     });
+    //                 store.writeQuery({
+    //                     query: GET_CUSTOMERS,
+    //                     data: {
+    //                         getCustomers: customerData.getCustomers.concat(data.createCustomer)
+    //                     }
+    //                 });
+    //             }
+    //         })
+            
+            
+    //     } catch (error:any) {
+    //         toastAlert(error.message)             
+    //     }
+
+
+    //     // handleUpdate(localCustomer)
+    // }
     return (
         <div className="bg-white p-8">
             {/* header  */}

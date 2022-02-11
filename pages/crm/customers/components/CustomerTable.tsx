@@ -134,7 +134,7 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
                         <TableCell className="border-r">{customer.come}</TableCell>
                         <TableCell className="border-r">{customer.mobilePhone}</TableCell>
                         <TableCell className="border-r">{customer.level}</TableCell>
-                        <TableCell className="border-r">{moment(customer.nextTime).format('MMM DD, YYYY')}</TableCell>
+                        <TableCell className="border-r">{customer.nextTime?moment(customer.nextTime).format('MMM DD, YYYY'):''}</TableCell>
                         <TableCell className="border-r">{customer.principal?.username}</TableCell>
                         <TableCell className="border-r">{customer.address}</TableCell>
                         <TableCell className="border-r">{customer.remark}</TableCell>

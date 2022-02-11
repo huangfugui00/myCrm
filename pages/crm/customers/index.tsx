@@ -8,14 +8,18 @@ import SelCustomer from './components/SelCustomer'
 
 import {useQuery ,useMutation} from '@apollo/client';
 import {customerType} from  'utils/type'
-import {GET_CUSTOMERS,DELETE_CUSTOMER,UPDATE_CUSTOMER} from 'utils/graphql'
+import {GET_CUSTOMERS,DELETE_CUSTOMER,UPDATE_CUSTOMER,CREATE_CUSTOMERS} from 'utils/graphql'
 import CustomerTable from './components/CustomerTable'
 import EditCustomer from './components/EditCustomer'
 import CreateCustomer from './components/CreateCustomer'
 import MyModal from '@/components/MyModal'
 import {toastAlert} from '@/components/ToastAlert'
+
+import {useSelector} from 'react-redux'
+import {IRootState } from 'store'
  
 const index = () => {
+    const authReducer = useSelector((state:IRootState) => state.authReducer)
     const [searchItem,setSearchItem] = useState<string>('')
     const [btnCustomerType,setBtnCustomerType] = useState<'all' | 'my' | 'subordinate' >('all')
     const [customers,setCustomers] = useState<customerType[]>([])
@@ -29,6 +33,8 @@ const index = () => {
    
     const [deleteCustomer]  = useMutation(DELETE_CUSTOMER)
     const [updateCustomer]  = useMutation(UPDATE_CUSTOMER)
+    const [createCustomer] = useMutation(CREATE_CUSTOMERS)
+
     useEffect(() => {
       if(data){
         console.log(data)
@@ -36,6 +42,8 @@ const index = () => {
         setCustomers(copyCustomers)
       }
     }, [data])
+
+
 
     //fetch数据或者search内容，客户类型更改触发，更改显示的客户
     useEffect(()=>{ 
@@ -65,14 +73,16 @@ const index = () => {
  
     
     const filterCustomType = (customer:customerType) :boolean=>{
+        console.log(customer.principal?._id)
+        console.log(authReducer.user._id)
         if(btnCustomerType==='all'){
             return true
         }
         if(btnCustomerType==='my'){
-            return customer.principal?.username==='Richard'
+            return customer.principal?.username===authReducer.user.username
         }
         if(btnCustomerType==='subordinate'){
-            return customer.principal?.username!=='Richard'
+            return customer.principal?.username!==authReducer.user.username
         }
         return false
     }
@@ -87,6 +97,32 @@ const index = () => {
             toastAlert(err.message) 
         }
         handleClose(false)
+    }
+
+    const handleCreate =async (customer:customerType)=>{
+        try {
+            await createCustomer({
+                variables:{...customer},
+                update: (store, { data })=>{
+                    const customerData:any = store.readQuery({
+                        query: GET_CUSTOMERS
+                        });
+                    store.writeQuery({
+                        query: GET_CUSTOMERS,
+                        data: {
+                            getCustomers: customerData.getCustomers.concat(data.createCustomer)
+                        }
+                    });
+                }
+            })        
+        } catch (error:any) {
+            toastAlert(error.message)             
+        }
+        handleOpenCreate(false)
+
+    
+
+        // handleUpdate(localCustomer)
     }
     
     const handleDelete =async()=>{
@@ -135,6 +171,7 @@ const index = () => {
                         </IconButton>
                         </div>
                     </div>
+                    
                     <div className="mt-6">
                         {
                         customerCheckedId?
@@ -148,7 +185,6 @@ const index = () => {
                         <SelCustomer customerType={btnCustomerType}  handleBtnClick={handleBtnClick}/>
                         </div>
                         }
-                      
                     </div>
 
                     <CustomerTable customers={customersApi} handleClickCheckBox={handleClickCheckBox} customerCheckedId={customerCheckedId}/>
@@ -158,7 +194,7 @@ const index = () => {
                     </MyModal>
                    
                     <MyModal open={openCreate} handleClose={()=>handleOpenCreate(false)}>
-                        <CreateCustomer />
+                        <CreateCustomer handleCreate={handleCreate}/>
                     </MyModal>
 
                 </main>

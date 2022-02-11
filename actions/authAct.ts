@@ -3,15 +3,20 @@ import {
     LOGOUT,
 } from 'constants/authCon'
 
+import {authType} from 'utils/type'
 
-// type returnType ={
-//     customers:customerType[]
-// }
 
-export const loginAct=(token:string)=>async(dispatch:any)=>{
+export const loginAct=(payload:authType)=>async(dispatch:any)=>{
     console.log('login dispatch')
     dispatch({
         type: LOGIN,
-        payload:token
+        payload:payload
+      })
+}
+
+export const logoutAct=()=>async(dispatch:any)=>{
+    console.log('logout dispatch')
+    dispatch({
+        type: LOGOUT,
       })
 }

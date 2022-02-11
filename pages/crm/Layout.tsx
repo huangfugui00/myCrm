@@ -2,9 +2,9 @@ import React,{useEffect} from 'react'
 import Header from 'components/header'
 import StickyTop from '@/components/StickyTop'
 import { useDispatch, useSelector } from 'react-redux'
-import {IRootState} from 'utils/store'
+import {IRootState} from 'store'
 import {useRouter} from 'next/router'
-import {ToastAlert,toastAlert} from '@/components/ToastAlert'
+import {ToastAlert} from '@/components/ToastAlert'
 
 const navLists=[
     {

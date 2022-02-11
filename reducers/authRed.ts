@@ -3,18 +3,25 @@ import {
     LOGOUT,
 } from 'constants/authCon'
 
-const initState= {
-    token:''
-}
+import {authType} from 'utils/type'
 
-// type returnType ={
-//     customers:customerType[]
-// }
+const initState = {
+    token:'',
+    user:{
+        _id:'',
+        username:'',
+        roles:[],
+        email:''
+    }
+} as authType
 
-export const authReducer = (state = initState,action:any) =>{
+export const authReducer = (state = initState,action:any) : authType=>{
     switch(action.type){
         case LOGIN:
-            return {...state,token:action.payload}
+            return {...state,token:action.payload.token,user:action.payload.user}
+        case LOGOUT:{
+            return initState
+        }
         default:
             return state
     }

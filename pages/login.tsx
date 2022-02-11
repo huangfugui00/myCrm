@@ -6,7 +6,7 @@ import {ToastAlert,toastAlert} from '@/components/ToastAlert'
 import {LOGIN} from 'utils/graphql'
 import {useMutation} from '@apollo/client';
 import { useDispatch, useSelector } from 'react-redux'
-import {IRootState} from 'utils/store'
+import {IRootState} from 'store'
 import { loginAct } from 'actions/authAct'
 
 
@@ -36,10 +36,9 @@ const Login = () => {
             const result= await loginSer( {
                  variables:{...data},
              })
-            const token = result.data.login.token
-            console.log(token) 
-            localStorage.setItem('token', token)
-             dispatch(loginAct(token))
+            const payload = result.data.login
+            localStorage.setItem('token', payload.token)
+             dispatch(loginAct(payload))
             router.push('/crm/workbench')
         }
         catch(err:any){
