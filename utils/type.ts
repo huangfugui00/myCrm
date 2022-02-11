@@ -21,6 +21,7 @@ export type authType={
     user:userType
 }
 
+
 type comeType = typeof come[number];
 type industryType = typeof industry[number]
 type levelType = typeof level[number]

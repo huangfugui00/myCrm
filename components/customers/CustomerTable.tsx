@@ -123,7 +123,7 @@ const CustomerTable:React.FC<CustomerTableProp> = (props) => {
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                    {displayCustomers.map((customer,index)=>(
+                    {displayCustomers&&displayCustomers.map((customer,index)=>(
                     <TableRow className={`${index%2 && 'bg-second-color'} hover:bg-blue-100`}>
                         <TableCell className="border-r"><Checkbox  checked={customerCheckedId===customer._id?true:false} onClick={()=>handleClickCheckBox(customer._id)}/></TableCell>
                         <TableCell className="border-r"><a href="#">{customer.name}</a></TableCell>

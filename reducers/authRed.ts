@@ -5,6 +5,7 @@ import {
 
 import {authType} from 'utils/type'
 
+
 const initState = {
     token:'',
     user:{
@@ -15,7 +16,7 @@ const initState = {
     }
 } as authType
 
-export const authReducer = (state = initState,action:any) : authType=>{
+export const authReducer = (state=initState,action:any) : authType=>{
     switch(action.type){
         case LOGIN:
             return {...state,token:action.payload.token,user:action.payload.user}

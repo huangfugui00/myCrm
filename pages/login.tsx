@@ -37,7 +37,7 @@ const Login = () => {
                  variables:{...data},
              })
             const payload = result.data.login
-            localStorage.setItem('token', payload.token)
+           
              dispatch(loginAct(payload))
             router.push('/crm/workbench')
         }

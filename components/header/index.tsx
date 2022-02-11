@@ -16,7 +16,6 @@ type headerProp={
 const Header:React.FC<headerProp> = (props) => {
     const dispatch = useDispatch()
     const handleSignOut = ()=>{
-        localStorage.removeItem('token')
         dispatch(logoutAct())
     }
 

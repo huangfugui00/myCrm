@@ -1,17 +1,17 @@
 import React,{useState,useEffect} from 'react'
-import Layout from '../Layout'
+import Layout from '@/components/Layout'
 import Mybutton from '@/components/MyButton'
 import DehazeIcon from '@mui/icons-material/Dehaze'; 
 import {IconButton} from '@mui/material'
-import SearchCustomer from './components/SearchCustomer'
-import SelCustomer from './components/SelCustomer'
+import SearchCustomer from '@/components/customers/SearchCustomer'
+import SelCustomer from '@/components/customers/SelCustomer'
 
 import {useQuery ,useMutation} from '@apollo/client';
 import {customerType} from  'utils/type'
 import {GET_CUSTOMERS,DELETE_CUSTOMER,UPDATE_CUSTOMER,CREATE_CUSTOMERS} from 'utils/graphql'
-import CustomerTable from './components/CustomerTable'
-import EditCustomer from './components/EditCustomer'
-import CreateCustomer from './components/CreateCustomer'
+import CustomerTable from '@/components/customers/CustomerTable'
+import EditCustomer from '@/components/customers/EditCustomer'
+import CreateCustomer from '@/components/customers/CreateCustomer'
 import MyModal from '@/components/MyModal'
 import {toastAlert} from '@/components/ToastAlert'
 
