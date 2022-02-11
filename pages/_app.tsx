@@ -13,6 +13,7 @@ import {store,persistor} from 'store'
 import { Provider } from 'react-redux'
 import { setContext } from '@apollo/client/link/context';
 
+console.log('server url')
 console.log(process.env.server_url)
 const httpLink = createHttpLink({
   // uri: 'http://localhost:3001/graphql',
