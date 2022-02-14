@@ -14,10 +14,10 @@ import { Provider } from 'react-redux'
 import { setContext } from '@apollo/client/link/context';
 
 console.log('server url')
-console.log(process.env.server_url)
+console.log(process.env.NEXT_PUBLIC_SERVER_URL)
 const httpLink = createHttpLink({
   // uri: 'http://localhost:3001/graphql',
-  uri:process.env.server_url,
+  uri:process.env.NEXT_PUBLIC_SERVER_URL,
 });
 
 const authLink = setContext((_, { headers }) => {

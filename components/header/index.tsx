@@ -33,7 +33,7 @@ const Header:React.FC<headerProp> = (props) => {
     
         
             <div className="mr-4">
-                <button className="text-white bg-red-500 px-4 py-1 rounded" onClick={()=>handleSignOut()}>登出</button>
+                <button className="text-white bg-danger-color px-4 py-1 rounded" onClick={()=>handleSignOut()}>登出</button>
             </div>
         </div>
     )

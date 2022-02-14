@@ -177,7 +177,7 @@ const index = () => {
                         customerCheckedId?
                         <div className="flex items-center gap-2 h-9">
                             <Mybutton onClick={()=>handleClose(true)} className="bg-primary-color text-white text-sm px-3 py-2 rounded">编辑</Mybutton>
-                            <Mybutton onClick={()=>handleDelete()} className="bg-red-700  text-white text-sm px-3 py-2 rounded">删除</Mybutton>
+                            <Mybutton onClick={()=>handleDelete()} className="bg-danger-color  text-white text-sm px-3 py-2 rounded">删除</Mybutton>
                         </div>
                         :
                         <div className=" flex  justify-between">

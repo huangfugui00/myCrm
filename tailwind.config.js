@@ -7,6 +7,7 @@ module.exports = {
       colors: {
         "primary-color": '#0052cc',
         "second-color": '#f4f5f7',
+        "danger-color": 'rgba(190, 4, 19, 0.99)',
       },
     },
     minWidth: {
