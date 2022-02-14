@@ -1,38 +1,34 @@
 import React,{useState,useEffect} from 'react'
 import {customerType,contactType,columnsDataIndex} from  'utils/type'
-import {columns} from 'utils/data'
+// import {columns} from 'utils/data'
 
 import {Table ,TableBody,TableHead,TableRow,TableCell,TablePagination}from '@mui/material';
-import moment from 'moment';
 
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import {Checkbox} from '@mui/material'
 
 
-type CustomerTableProp<T>={
-    customers:T[],
-    customerCheckedId:string,
-    handleClickCheckBox:(customerName:string)=>void,
+type  contentType = customerType | contactType
+type  columnType = {title:string,dataIndex:string}
+
+type ShowTableProp<T extends contentType,C extends columnType>={
+    columns: C[],
+    contents:T[],
+    itemCheckId:string,
+    handleClickCheckBox:(itemCheckId:string)=>void,
 }
 
-//依赖关系：CUSTOMERS->CONDITION->DISPLAY
-//Customers:外部传入的客户数据，
-//CONDITION：对表进行排序等操作后得到的数据
-//DISPLAY:真正显示的数据
-
-
-const CustomerTable:React.FC<CustomerTableProp<customerType>> = (props) => {
-
-    const {customers,customerCheckedId,handleClickCheckBox} = props
-    const [conditionCustomers,setConditionCustomers] = useState(customers)
-    const [displayCustomers,setDisplayCustomers] = useState(customers)
-    const [columnSort,setColumnSort] = useState<columnsDataIndex>()
+function ShowTable<T extends contentType, C extends columnType>(props:ShowTableProp<T,C>){
+    const {columns,contents,itemCheckId,handleClickCheckBox} = props
+    const [conditionContents,setConditionContents] = useState<T[]>(contents) 
+    const [displayContents,setDisplayContents] = useState<T[]>(contents)
+    const [columnSort,setColumnSort] = useState<string>()
     const [sortDirection,setSortDirection] = useState<'down'|'up'>()
     const [rowsPerPage,setRowsPerPage] = useState(5)
     const [page,setPage] = useState(0)
 
-
+    
     const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
@@ -42,16 +38,16 @@ const CustomerTable:React.FC<CustomerTableProp<customerType>> = (props) => {
         setPage(0);
       };
 
-    const handleDecendSort  = (column:columnsDataIndex)=>{
-        const decenSoftFunc = (a:customerType,b:customerType)=>{
+    const handleDecendSort  = (column:string)=>{
+        const decenSoftFunc = (a:T,b:T)=>{
             let value1,value2
             if(column==='principal'){
                 value1 = a[column]?.username
                 value2 = b[column]?.username
             }
             else{
-                value1 = a[column]
-                value2 = b[column]
+                // value1 = a[column]
+                // value2 = b[column]
             }
            if( value1 && value2){
               return value1<value2?1:-1
@@ -60,22 +56,22 @@ const CustomerTable:React.FC<CustomerTableProp<customerType>> = (props) => {
                return 0
            }
         }
-        const copyCustomers = [...customers]
-        setConditionCustomers( copyCustomers.sort(decenSoftFunc))
+        const copyContents = [...contents]
+        setConditionContents( copyContents.sort(decenSoftFunc))
         setColumnSort(column)
         setSortDirection('down')
     }
 
-    const handleSort  = (column:columnsDataIndex)=>{
-        const softFunc = (a:customerType,b:customerType)=>{
+    const handleSort  = (column:string)=>{
+        const softFunc = (a:T,b:T)=>{
             let value1,value2
             if(column==='principal'){
                 value1 = a[column]?.username
                 value2 = b[column]?.username
             }
             else{
-                value1 = a[column]
-                value2 = b[column]
+                // value1 = a[column]
+                // value2 = b[column]
             }
            if( value1 && value2){
               return value1>value2?1:-1
@@ -84,24 +80,22 @@ const CustomerTable:React.FC<CustomerTableProp<customerType>> = (props) => {
                return 0
            }
         }
-        const copyCustomers = [...customers]//直接对state进行sort会报错，因为只能通过set方式更改state
-       
-        setConditionCustomers( copyCustomers.sort(softFunc))
+        const copyContents = [...contents]
+        setConditionContents( copyContents.sort(softFunc))
         setColumnSort(column)
         setSortDirection('up')
-
     }
 
-    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - customers.length) : 0;
+    const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - contents.length) : 0;
    
     useEffect(() => {
-        setConditionCustomers(customers)    
-    }, [customers])//condition依赖于customers
+        setConditionContents(contents)    
+    }, [contents])//condition依赖于customers
     
     useEffect(()=>{
-        const sliceCustomers = conditionCustomers.slice(page*rowsPerPage,(page+1)*rowsPerPage)
-        setDisplayCustomers(sliceCustomers)
-    },[page,rowsPerPage,conditionCustomers])//display依赖于condition
+        const sliceContents = conditionContents.slice(page*rowsPerPage,(page+1)*rowsPerPage)
+        setDisplayContents(sliceContents)
+    },[page,rowsPerPage,conditionContents])//display依赖于condition
     // console.log(displayCustomers)
     return (
         <div className="  mt-4">
@@ -115,7 +109,6 @@ const CustomerTable:React.FC<CustomerTableProp<customerType>> = (props) => {
                         <div className="flex items-center group leading-8 ">
                             <h2 className="text-gray-500">{column.title}</h2>
                             {/* sort */}
-                            {/* ${columnSort===column.dataIndex && sortDirection === 'up' && ''} */}
                             <div className={` items-center   group-hover:flex   group-hover:flex-col ${columnSort===column.dataIndex ? 'flex flex-col':'hidden'}`}>
                                 <ArrowDropUpIcon onClick={()=>handleSort(column.dataIndex)} className={` -mb-1 cursor-pointer`} sx={{color:`${columnSort===column.dataIndex && sortDirection === 'up'?'blue':'gray'}`    }}/>
                                 <ArrowDropDownIcon onClick={()=>handleDecendSort(column.dataIndex)} className="-mt-1 cursor-pointer"  sx={{color:`${columnSort===column.dataIndex && sortDirection === 'down'?'blue':'gray'}`}}/>
@@ -126,10 +119,10 @@ const CustomerTable:React.FC<CustomerTableProp<customerType>> = (props) => {
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                    {displayCustomers&&displayCustomers.map((customer,index)=>(
+                    {displayContents&&displayContents.map((content,index)=>(
                     <TableRow className={`${index%2 && 'bg-second-color'} hover:bg-blue-100`}>
-                        <TableCell className="border-r"><Checkbox  checked={customerCheckedId===customer._id?true:false} onClick={()=>handleClickCheckBox(customer._id)}/></TableCell>
-                        <TableCell className="border-r"><a href="#">{customer.name}</a></TableCell>
+                        <TableCell className="border-r"><Checkbox  checked={itemCheckId===content._id?true:false} onClick={()=>handleClickCheckBox(content._id)}/></TableCell>
+                        {/* <TableCell className="border-r"><a href="#">{customer.name}</a></TableCell>
                         <TableCell className="border-r">{customer.phone}</TableCell>
                         <TableCell className="border-r">{customer.email}</TableCell>
                         <TableCell className="border-r"><p className="line-clamp-2">{customer.url}</p></TableCell>
@@ -140,7 +133,7 @@ const CustomerTable:React.FC<CustomerTableProp<customerType>> = (props) => {
                         <TableCell className="border-r">{customer.nextTime?moment(customer.nextTime).format('MMM DD, YYYY'):''}</TableCell>
                         <TableCell className="border-r">{customer.principal?.username}</TableCell>
                         <TableCell className="border-r">{customer.address}</TableCell>
-                        <TableCell className="border-r">{customer.remark}</TableCell>
+                        <TableCell className="border-r">{customer.remark}</TableCell> */}
                     </TableRow>
                     ))}
                      {emptyRows > 0 && (
@@ -159,7 +152,7 @@ const CustomerTable:React.FC<CustomerTableProp<customerType>> = (props) => {
             <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"
-                count={customers.length}
+                count={contents.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
@@ -169,4 +162,5 @@ const CustomerTable:React.FC<CustomerTableProp<customerType>> = (props) => {
     )
 }
 
-export default CustomerTable
+
+export default ShowTable

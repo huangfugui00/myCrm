@@ -43,7 +43,22 @@ export type customerType={
     principal?:userType,
 }
 
-
+export type contactType={
+    key: React.Key;
+    _id:string,
+    name:string,
+    copName:string,
+    phone?:string,
+    mobilePhone?:string,   
+    email?:string,
+    url?:string,
+    address?:string,
+    remark?:string,
+    industry?:industryType,
+    level?: levelType,
+    nextTime?:Date,
+    principal?:userType,
+}
  
 export type columnsDataIndex = "name" | 'phone' | 'email' | 'url' | 'industry' | 'come' | 'mobilePhone' | "level" | 'nextTime' | 'principal' | 'address' | 'remark'
 

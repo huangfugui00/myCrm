@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react'
-import {customerType,contactType,columnsDataIndex} from  'utils/type'
+import {customerType,columnsDataIndex} from  'utils/type'
 import {columns} from 'utils/data'
 
 import {Table ,TableBody,TableHead,TableRow,TableCell,TablePagination}from '@mui/material';
@@ -10,8 +10,8 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import {Checkbox} from '@mui/material'
 
 
-type CustomerTableProp<T>={
-    customers:T[],
+type CustomerTableProp={
+    customers:customerType[],
     customerCheckedId:string,
     handleClickCheckBox:(customerName:string)=>void,
 }
@@ -20,13 +20,10 @@ type CustomerTableProp<T>={
 //Customers:外部传入的客户数据，
 //CONDITION：对表进行排序等操作后得到的数据
 //DISPLAY:真正显示的数据
-
-
-const CustomerTable:React.FC<CustomerTableProp<customerType>> = (props) => {
-
+const CustomerTable:React.FC<CustomerTableProp> = (props) => {
     const {customers,customerCheckedId,handleClickCheckBox} = props
-    const [conditionCustomers,setConditionCustomers] = useState(customers)
-    const [displayCustomers,setDisplayCustomers] = useState(customers)
+    const [conditionCustomers,setConditionCustomers] = useState<customerType[]>(customers)
+    const [displayCustomers,setDisplayCustomers] = useState<customerType[]>(customers)
     const [columnSort,setColumnSort] = useState<columnsDataIndex>()
     const [sortDirection,setSortDirection] = useState<'down'|'up'>()
     const [rowsPerPage,setRowsPerPage] = useState(5)
