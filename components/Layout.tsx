@@ -15,6 +15,10 @@ const navLists=[
         label:'客户',
         path:'/crm/customers',
     },
+    {
+        label:'联系人',
+        path:'/crm/contact',
+    },
 ]
 
 

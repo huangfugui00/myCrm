@@ -19,6 +19,11 @@ type ShowTableProp<T extends contentType,C extends columnType>={
     handleClickCheckBox:(itemCheckId:string)=>void,
 }
 
+
+function isValidKey<T extends contentType>(key:string,obj: T){
+    return key in obj
+}
+
 function ShowTable<T extends contentType, C extends columnType>(props:ShowTableProp<T,C>){
     const {columns,contents,itemCheckId,handleClickCheckBox} = props
     const [conditionContents,setConditionContents] = useState<T[]>(contents) 
@@ -46,8 +51,10 @@ function ShowTable<T extends contentType, C extends columnType>(props:ShowTableP
                 value2 = b[column]?.username
             }
             else{
-                // value1 = a[column]
-                // value2 = b[column]
+                if(column in a ){
+                    value1=a[column]
+                    value2=b[column]
+                }
             }
            if( value1 && value2){
               return value1<value2?1:-1
@@ -70,8 +77,8 @@ function ShowTable<T extends contentType, C extends columnType>(props:ShowTableP
                 value2 = b[column]?.username
             }
             else{
-                // value1 = a[column]
-                // value2 = b[column]
+                value1 = a[column]
+                value2 = b[column]
             }
            if( value1 && value2){
               return value1>value2?1:-1
@@ -96,7 +103,7 @@ function ShowTable<T extends contentType, C extends columnType>(props:ShowTableP
         const sliceContents = conditionContents.slice(page*rowsPerPage,(page+1)*rowsPerPage)
         setDisplayContents(sliceContents)
     },[page,rowsPerPage,conditionContents])//display依赖于condition
-    // console.log(displayCustomers)
+
     return (
         <div className="  mt-4">
             <div className="overflow-x-scroll">
@@ -122,18 +129,18 @@ function ShowTable<T extends contentType, C extends columnType>(props:ShowTableP
                     {displayContents&&displayContents.map((content,index)=>(
                     <TableRow className={`${index%2 && 'bg-second-color'} hover:bg-blue-100`}>
                         <TableCell className="border-r"><Checkbox  checked={itemCheckId===content._id?true:false} onClick={()=>handleClickCheckBox(content._id)}/></TableCell>
-                        {/* <TableCell className="border-r"><a href="#">{customer.name}</a></TableCell>
-                        <TableCell className="border-r">{customer.phone}</TableCell>
-                        <TableCell className="border-r">{customer.email}</TableCell>
-                        <TableCell className="border-r"><p className="line-clamp-2">{customer.url}</p></TableCell>
-                        <TableCell className="border-r">{customer.industry}</TableCell>
-                        <TableCell className="border-r">{customer.come}</TableCell>
-                        <TableCell className="border-r">{customer.mobilePhone}</TableCell>
-                        <TableCell className="border-r">{customer.level}</TableCell>
-                        <TableCell className="border-r">{customer.nextTime?moment(customer.nextTime).format('MMM DD, YYYY'):''}</TableCell>
-                        <TableCell className="border-r">{customer.principal?.username}</TableCell>
-                        <TableCell className="border-r">{customer.address}</TableCell>
-                        <TableCell className="border-r">{customer.remark}</TableCell> */}
+                        {
+                            columns.map((column,index)=>
+                            column.dataIndex==='principal'?
+                            <TableCell className="border-r">
+                                {content.principal?.username}
+                            </TableCell>
+                            :
+                            <TableCell className="border-r">
+                               <p className="line-clamp-2"> {content[column.dataIndex]}</p>
+                            </TableCell>
+                            )
+                        }
                     </TableRow>
                     ))}
                      {emptyRows > 0 && (

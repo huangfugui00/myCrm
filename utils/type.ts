@@ -1,4 +1,4 @@
-import {come,industry,level} from './data'
+import {come,industry,level,gender} from './data'
 export type navItemType = {
     label:string,
     path:string,
@@ -25,6 +25,7 @@ export type authType={
 type comeType = typeof come[number];
 type industryType = typeof industry[number]
 type levelType = typeof level[number]
+type genderType = typeof gender[number]
 
 export type customerType={
     key: React.Key;
@@ -41,22 +42,23 @@ export type customerType={
     level?: levelType,
     nextTime?:Date,
     principal?:userType,
+    [key: string]: any,
 }
 
 export type contactType={
     key: React.Key;
     _id:string,
     name:string,
-    copName:string,
+    copName?:customerType,
+    jobTitle:string,
     phone?:string,
     mobilePhone?:string,   
     email?:string,
-    url?:string,
     address?:string,
     remark?:string,
-    industry?:industryType,
-    level?: levelType,
+    gender: genderType,
     nextTime?:Date,
+    [key: string]: any,
     principal?:userType,
 }
  

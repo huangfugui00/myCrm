@@ -232,9 +232,9 @@ const index = () => {
                 <main>
 
                     <div className=" flex justify-between">
-                        <span className="text-2xl">客户管理</span>
+                        <span className="text-2xl">联系人管理</span>
                         <div className="flex  items-center">
-                        <button onClick={()=>handleOpenCreate(true)} className="bg-primary-color text-white text-sm px-3 py-2 rounded">新建客户</button>
+                        <button onClick={()=>handleOpenCreate(true)} className="bg-primary-color text-white text-sm px-3 py-2 rounded">新建联系人</button>
                         <IconButton>
                             <DehazeIcon/>
                         </IconButton>
@@ -250,7 +250,7 @@ const index = () => {
                         </div>
                         :
                         <div className=" flex  justify-between">
-                        <SearchItem placeholder='客户名称/手机/电话' value={searchItem} setValue={setSearchItem}/>
+                        <SearchItem placeholder='联系人名称/手机/电话' value={searchItem} setValue={setSearchItem}/>
                         <SelButtons items={buttonItems} keyName={btnSelType} handleBtnClick={handleBtnClick}/>
                         </div>
                         }
