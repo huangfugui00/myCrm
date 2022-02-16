@@ -45,11 +45,9 @@ export type customerType={
     [key: string]: any,
 }
 
-export type contactType={
-    key: React.Key;
-    _id:string,
+
+export type contactItemType={
     name:string,
-    copName?:customerType,
     jobTitle?:string,
     phone?:string,
     mobilePhone?:string,   
@@ -57,23 +55,24 @@ export type contactType={
     address?:string,
     remark?:string,
     gender?: genderType,
+}
+
+export type contactType={
+    _id:string,
     nextTime?:Date,
     [key: string]: any,
     principal?:userType,
-}
+    copName?:customerType
+} & contactItemType
 
 export type updateContactInput={
     _id:string,
-    name:string,
     copName?:string,
-    jobTitle?:string,
-    phone?:string,
-    mobilePhone?:string,   
-    email?:string,
-    address?:string,
-    remark?:string,
-    gender?: genderType,
-}
+} & contactItemType
+
+export type createContactInput = {
+    copName?:string,
+} & contactItemType
 
 export type columnsDataIndex = "name" | 'phone' | 'email' | 'url' | 'industry' | 'come' | 'mobilePhone' | "level" | 'nextTime' | 'principal' | 'address' | 'remark'
 

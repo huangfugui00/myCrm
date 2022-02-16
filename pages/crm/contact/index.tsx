@@ -7,11 +7,12 @@ import SearchItem from '@/components/crm/SearchItem'
 import SelButtons from '@/components/crm/SelButtons'
 
 import {useQuery ,useMutation} from '@apollo/client';
-import {contactType,customerType,updateContactInput} from  'utils/type'
+import {contactType,customerType,updateContactInput,createContactInput} from  'utils/type'
 import {GET_CONTACTS,DELETE_CONTACT,UPDATE_CONTACT,CREATE_CONTACT} from 'graphql/contact'
 import {GET_CUSTOMERS_NAME} from 'graphql/customer'
-import ShowTable from '@/components/crm/ShowTable'
+import CreateContact from '@/components/contact/CreateContact'
 import EditContact from '@/components/contact/EditContact'
+import ShowTable from '@/components/crm/ShowTable'
 // import CreateTable from '@/components/crm/CreateTable'
 import MyModal from '@/components/MyModal'
 import {toastAlert} from '@/components/ToastAlert'
@@ -177,7 +178,7 @@ const index = () => {
 
     
 
-    const handleCreate =async (contact:contactType)=>{
+    const handleCreate =async (contact:createContactInput)=>{
         try {
             await createContact({
                 variables:{...contact},
@@ -267,9 +268,9 @@ const index = () => {
                         <EditContact contact={contactsApi.find(contact=>contact._id===contactCheckedId)} handleUpdate={handleUpdate} customersName={customersName}/>
                     </MyModal>
                    
-                    {/* <MyModal open={openCreate} handleClose={()=>handleOpenCreate(false)}>
-                        <CreateTable handleCreate={handleCreate}/>
-                    </MyModal>   */}
+                    <MyModal open={openCreate} handleClose={()=>handleOpenCreate(false)}>
+                        <CreateContact customersName={customersName} handleCreate={handleCreate}/>
+                    </MyModal>  
 
                 </main>
             </Layout>
