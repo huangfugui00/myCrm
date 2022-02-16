@@ -15,7 +15,7 @@ export const CREATE_CONTACT = gql`
     }
 `
 
-export const GET_CONTACT=gql`
+export const GET_CONTACTS=gql`
     query getContacts{
         getContacts {
             _id
@@ -24,6 +24,7 @@ export const GET_CONTACT=gql`
             mobilePhone
             email
             gender
+            jobTitle
             nextTime
             copName{
                 name
@@ -45,14 +46,22 @@ mutation updateContact($_id:ID!,$name:String,$phone:String,$copName:ID,
   updateContact(updateInput:{_id:$_id,name:$name,phone:$phone,copName:$copName,mobilePhone:$mobilePhone,
   email:$email,gender:$gender,jobTitle:$jobTitle,remark:$remark,
   address:$address}){
-              _id
-              phone
-              name
-              email
-              mobilePhone
-              nextTime
-              address
-              remark
+    _id
+    phone
+    name
+    mobilePhone
+    email
+    gender
+    jobTitle
+    nextTime
+    copName{
+        name
+    }
+    address
+    remark
+    principal {
+        username
+}
   }
 }
 `

@@ -1,6 +1,18 @@
 
 import { gql} from '@apollo/client';
-export const GET_CUSTOMERS = gql`
+
+
+export const GET_CUSTOMERS_NAME = gql`
+  query getCustomers{
+    getCustomers{
+      _id
+      name
+    }
+  }
+`
+
+
+export const GET_CUSTOMERS = gql` 
     query getCustomers{
         getCustomers {
             _id
@@ -72,17 +84,4 @@ mutation updateCustomer($_id:ID!,$name:String,$phone:String,$come:String,
 }
 `
 
-export const LOGIN = gql`
-mutation login($email:String!,$password:String!){
-    login(email:$email,password:$password){
-      token
-      user{
-        _id
-        roles
-        email
-        username
-      }
-    }
-  }
-`
 

@@ -24,8 +24,24 @@ function isValidKey<T extends contentType>(key:string,obj: T){
     return key in obj
 }
 
+function tableCell(content:contentType,dataIndex:string){
+    
+    switch(dataIndex){
+        case 'principal':
+            return content.principal?.username
+        case 'copName':
+            console.log(content.copName.name)
+            return content.copName.name
+        default:
+            return content[dataIndex]
+    }
+}
+
+
 function ShowTable<T extends contentType, C extends columnType>(props:ShowTableProp<T,C>){
+    
     const {columns,contents,itemCheckId,handleClickCheckBox} = props
+    console.log(contents)
     const [conditionContents,setConditionContents] = useState<T[]>(contents) 
     const [displayContents,setDisplayContents] = useState<T[]>(contents)
     const [columnSort,setColumnSort] = useState<string>()
@@ -131,14 +147,17 @@ function ShowTable<T extends contentType, C extends columnType>(props:ShowTableP
                         <TableCell className="border-r"><Checkbox  checked={itemCheckId===content._id?true:false} onClick={()=>handleClickCheckBox(content._id)}/></TableCell>
                         {
                             columns.map((column,index)=>
-                            column.dataIndex==='principal'?
                             <TableCell className="border-r">
-                                {content.principal?.username}
-                            </TableCell>
-                            :
-                            <TableCell className="border-r">
-                               <p className="line-clamp-2"> {content[column.dataIndex]}</p>
-                            </TableCell>
+                               {tableCell(content,column.dataIndex)}
+                            </TableCell> 
+                            // column.dataIndex==='principal' ?
+                            // <TableCell className="border-r">
+                            //     {content.principal?.username}
+                            // </TableCell>
+                            // :
+                            // <TableCell className="border-r">
+                            //    <p className="line-clamp-2"> {content[column.dataIndex]}</p>
+                            // </TableCell>
                             )
                         }
                     </TableRow>

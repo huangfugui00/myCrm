@@ -7,11 +7,12 @@ import SearchItem from '@/components/crm/SearchItem'
 import SelButtons from '@/components/crm/SelButtons'
 
 import {useQuery ,useMutation} from '@apollo/client';
-import {customerType} from  'utils/type'
-import {GET_CUSTOMERS,DELETE_CUSTOMER,UPDATE_CUSTOMER,CREATE_CUSTOMERS} from 'utils/graphql'
+import {contactType,customerType,updateContactInput} from  'utils/type'
+import {GET_CONTACTS,DELETE_CONTACT,UPDATE_CONTACT,CREATE_CONTACT} from 'graphql/contact'
+import {GET_CUSTOMERS_NAME} from 'graphql/customer'
 import ShowTable from '@/components/crm/ShowTable'
-import EditTable from '@/components/crm/EditTable'
-import CreateTable from '@/components/crm/CreateTable'
+import EditContact from '@/components/contact/EditContact'
+// import CreateTable from '@/components/crm/CreateTable'
 import MyModal from '@/components/MyModal'
 import {toastAlert} from '@/components/ToastAlert'
 
@@ -42,18 +43,14 @@ const columns=[
     },
     {
       title: '客户名称',
-      dataIndex: 'customerName',
+      dataIndex: 'copName',
     },
     {
       title: '邮箱',
       dataIndex: 'email',
      
     },
-    {
-        title:'网址',
-        dataIndex:'url',
-     
-    },
+    
     {
         title:'职务',
         dataIndex:'jobTitle',
@@ -67,7 +64,10 @@ const columns=[
     {
         title:'手机',
         dataIndex:'mobilePhone',
-      
+    },
+    {
+        title:'电话',
+        dataIndex:'phone',
     },
     {
         title:'下次联系时间',
@@ -93,43 +93,50 @@ const index = () => {
     const authReducer = useSelector((state:IRootState) => state.authReducer)
     const [searchItem,setSearchItem] = useState<string>('')
     const [btnSelType,setBtnSelType] = useState('all')
-    const [customers,setCustomers] = useState<customerType[]>([])
-    const [customersApi,setCustomersApi] = useState<customerType[]>([])
-    const [customerCheckedId,setCustomerCheckedId] = useState('')
+    const [customersName,setCustomersName] = useState<customerType[]>([])
+    const [contacts,setContacts] = useState<contactType[]>([])
+    const [contactsApi,setContactsApi] = useState<contactType[]>([])
+    const [contactCheckedId,setContactCheckedId] = useState('')
     const [open,handleClose] = useState(false)
     const [openCreate,handleOpenCreate] = useState(false)
 
     // //右侧button组
-    const {  data } =  useQuery(GET_CUSTOMERS)
+    const contactsQuery =  useQuery(GET_CONTACTS)
+    const customersNameQuery=  useQuery(GET_CUSTOMERS_NAME)
    
-    const [deleteCustomer]  = useMutation(DELETE_CUSTOMER)
-    const [updateCustomer]  = useMutation(UPDATE_CUSTOMER)
-    const [createCustomer] = useMutation(CREATE_CUSTOMERS)
+    const [deleteContact]  = useMutation(DELETE_CONTACT)
+    const [updateContact]  = useMutation(UPDATE_CONTACT)
+    const [createContact] = useMutation(CREATE_CONTACT)
 
     useEffect(() => {
-      if(data){
-        console.log(data)
-        let copyCustomers:customerType[] = data.getCustomers
-        setCustomers(copyCustomers)
+      if(contactsQuery?.data){
+        let copyContacts:contactType[] = contactsQuery.data.getContacts
+        setContacts(copyContacts)
       }
-    }, [data])
+    }, [contactsQuery])
 
+    useEffect(() => {
+        if(customersNameQuery?.data){
+          let customersName:customerType[] = customersNameQuery.data.getCustomers
+          setCustomersName(customersName)
+        }
+      }, [customersNameQuery])
 
 
     //fetch数据或者search内容，客户类型更改触发，更改显示的客户
     useEffect(()=>{ 
-        let copyCustomers = customers
-        copyCustomers = copyCustomers.filter((customer)=>customer.phone?.includes(searchItem) || customer.name?.includes(searchItem) || customer.email?.includes(searchItem) || customer.mobilePhone?.includes(searchItem))
-        copyCustomers = copyCustomers.filter((customer)=>filterCustomType(customer))
-        setCustomersApi(copyCustomers)
-    },[customers,searchItem,btnSelType])
+        let copyContacts = contacts
+        copyContacts = copyContacts.filter((contact)=>contact.phone?.includes(searchItem) || contact.name?.includes(searchItem) || contact.email?.includes(searchItem) || contact.mobilePhone?.includes(searchItem))
+        copyContacts = copyContacts.filter((contact)=>filterCustomType(contact))
+        setContactsApi(copyContacts)
+    },[contacts,searchItem,btnSelType])
     
     const handleClickCheckBox=(id:string)=>{
-        if(customerCheckedId===id){
-            setCustomerCheckedId('')
+        if(contactCheckedId===id){
+            setContactCheckedId('')
         }
         else{
-            setCustomerCheckedId(id)
+            setContactCheckedId(id)
         }
     }
 
@@ -143,23 +150,23 @@ const index = () => {
     }
  
     
-    const filterCustomType = (customer:customerType) :boolean=>{
+    const filterCustomType = (contact:contactType) :boolean=>{
         if(btnSelType==='all'){
             return true
         }
         if(btnSelType==='my'){
-            return customer.principal?.username===authReducer.user.username
+            return contact.principal?.username===authReducer.user.username
         }
         if(btnSelType==='subordinate'){
-            return customer.principal?.username!==authReducer.user.username
+            return contact.principal?.username!==authReducer.user.username
         }
         return false
     }
 
-    const handleUpdate =async (customer:customerType)=>{
+    const handleUpdate =async (contact:updateContactInput)=>{
         try{
-            await updateCustomer( {
-                variables:{...customer},
+            await updateContact( {
+                variables:{...contact},
             })
         }
         catch(err:any){
@@ -168,18 +175,20 @@ const index = () => {
         handleClose(false)
     }
 
-    const handleCreate =async (customer:customerType)=>{
+    
+
+    const handleCreate =async (contact:contactType)=>{
         try {
-            await createCustomer({
-                variables:{...customer},
+            await createContact({
+                variables:{...contact},
                 update: (store, { data })=>{
-                    const customerData:any = store.readQuery({
-                        query: GET_CUSTOMERS
+                    const contactData:any = store.readQuery({
+                        query: GET_CONTACTS
                         });
                     store.writeQuery({
-                        query: GET_CUSTOMERS,
+                        query: GET_CONTACTS,
                         data: {
-                            getCustomers: customerData.getCustomers.concat(data.createCustomer)
+                            getContacts: contactData.getContacts.concat(data.createContact)
                         }
                     });
                 }
@@ -188,26 +197,22 @@ const index = () => {
             toastAlert(error.message)             
         }
         handleOpenCreate(false)
-
-    
-
-        // handleUpdate(localCustomer)
     }
     
     const handleDelete =async()=>{
         try{
-            if(customerCheckedId){
-                console.log('delete customer')
-              await  deleteCustomer( {
-                    variables:{_id:customerCheckedId},
+            if(contactCheckedId){
+                console.log('delete contact')
+              await  deleteContact( {
+                    variables:{_id:contactCheckedId},
                     update: (store, { data })=>{
-                        const customerData:any = store.readQuery({
-                            query: GET_CUSTOMERS
+                        const contactData:any = store.readQuery({
+                            query: GET_CONTACTS
                             });
                         store.writeQuery({
-                            query: GET_CUSTOMERS,
+                            query: GET_CONTACTS,
                             data: {
-                                getCustomers: customerData.getCustomers.filter((customer:any)=>customer._id!==data.deleteCustomer._id)
+                                getContacts: contactData.getContacts.filter((contact:any)=>contact._id!==data.deleteContact._id)
                             }
                         });
                     }
@@ -219,7 +224,7 @@ const index = () => {
         }
     }
    
-   if(!customers){
+   if(!contacts){
        return<></>
    }
     // if (loading) return <p>Loading...</p>;
@@ -243,7 +248,7 @@ const index = () => {
                     
                     <div className="mt-6">
                         {
-                        customerCheckedId?
+                        contactCheckedId?
                         <div className="flex items-center gap-2 h-9">
                             <button onClick={()=>handleClose(true)} className="bg-primary-color text-white text-sm px-3 py-2 rounded">编辑</button>
                             <button onClick={()=>handleDelete()} className="bg-danger-color  text-white text-sm px-3 py-2 rounded">删除</button>
@@ -256,15 +261,15 @@ const index = () => {
                         }
                     </div>
 
-                    <ShowTable columns={columns} contents={customersApi} handleClickCheckBox={handleClickCheckBox} itemCheckId={customerCheckedId}/>
+                    <ShowTable columns={columns} contents={contactsApi} handleClickCheckBox={handleClickCheckBox} itemCheckId={contactCheckedId}/>
                     
-                    {/* <MyModal open={open} handleClose={()=>handleClose(false)}>
-                        <EditTable customer={customersApi.find(customer=>customer._id===customerCheckedId)} handleUpdate={handleUpdate}/>
+                    <MyModal open={open} handleClose={()=>handleClose(false)}>
+                        <EditContact contact={contactsApi.find(contact=>contact._id===contactCheckedId)} handleUpdate={handleUpdate} customersName={customersName}/>
                     </MyModal>
                    
-                    <MyModal open={openCreate} handleClose={()=>handleOpenCreate(false)}>
+                    {/* <MyModal open={openCreate} handleClose={()=>handleOpenCreate(false)}>
                         <CreateTable handleCreate={handleCreate}/>
-                    </MyModal> */}
+                    </MyModal>   */}
 
                 </main>
             </Layout>

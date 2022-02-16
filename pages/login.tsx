@@ -3,7 +3,7 @@ import {useForm,SubmitHandler} from 'react-hook-form'
 import { useRouter } from 'next/router'
 import Logo from '@/components/Logo'
 import {ToastAlert,toastAlert} from '@/components/ToastAlert'
-import {LOGIN} from 'utils/graphql'
+import {LOGIN} from 'graphql/auth'
 import {useMutation} from '@apollo/client';
 import { useDispatch, useSelector } from 'react-redux'
 import {IRootState} from 'store'

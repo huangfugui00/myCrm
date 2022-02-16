@@ -1,36 +1,42 @@
-import React ,{useState}from 'react'
+import React,{useState} from 'react'
+import {contactType,customerType,updateContactInput} from 'utils/type'
+import {gender} from 'utils/data'
 import { useForm,SubmitHandler } from 'react-hook-form';
-import { customerType } from 'utils/type';
-import {come,industry,level} from 'utils/data'
+
+type EditContactProp={
+    contact:contactType | undefined,
+    customersName: customerType[],
+    handleUpdate:(contact:updateContactInput)=>void
+}
+
+
 type Inputs = {
     name: string,
     phone:string,
     mobilePhone:string,
     email:string,
   };
+  
 
-type CreaateCustomerProp={
-    handleCreate:(customer:customerType)=>void
-}
+const EditContact:React.FC<EditContactProp> = (props) => {
+    const {contact,customersName,handleUpdate} = props
+    if (!contact){
+        return<></>
+    }
+    const [localContact,setLocalContact]=useState(contact)   
+    const className =" py-1 pl-1 rounded text-gray-500 bg-gray-100 text-sm outline-none border focus:border-blue-200 w-96"
 
-const CreateCustomer:React.FC<CreaateCustomerProp> = (props) => {
-    const {handleCreate} = props
-    const className ="py-1 pl-1 rounded text-gray-500 bg-gray-100 text-sm outline-none border focus:border-blue-200 w-96"
     const {
         register,
         handleSubmit,
         formState: { errors },
       } = useForm<Inputs>();
 
-    const initCustomer = {
-        key:'',
-        name:'',
-        _id:'',
-    }
-    const [localCustomer,setLocalCustomer]=useState<customerType>(initCustomer)  
-
     const onSubmit:SubmitHandler<Inputs>=(data)=>{
-        handleCreate(localCustomer)
+        const { copName , ...body} = localContact
+        const bodys = body as updateContactInput
+        bodys.copName = copName?._id
+        const result = handleUpdate(bodys)
     }
 
 
@@ -38,32 +44,33 @@ const CreateCustomer:React.FC<CreaateCustomerProp> = (props) => {
         <div className="bg-white p-8">
             {/* header  */}
             <div className="mb-8">
-                <h1 className="text-lg font-bold">编辑客户信息</h1>
+                <h1 className="text-lg font-bold">编辑联系人</h1>
             </div>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-4">
                     <div className="flex gap-8 ">
                         <div>
-                            <p className="text-sm text-gray-500 mb-1">客户名称</p>
-                            <input value={localCustomer.name} 
+                            <p className="text-sm text-gray-500 mb-1">姓名</p>
+                            <input value={localContact.name} 
                             {...register("name",{ required: true })}
                             className={className}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalCustomer({...localCustomer,name:e.target.value})}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalContact({...localContact,name:e.target.value})}
                             />
                             <p className="text-sm text-red-500">
                             {errors.name && <span>This field is required</span>}
                             </p>
                         </div>
                         <div>
-                            <p className="text-sm text-gray-500 mb-1">客户来源</p>
+                            <p className="text-sm text-gray-500 mb-1">客户名称</p>
                             <select className={className}
-                            value={localCustomer.come}
-                            onChange={(e:React.ChangeEvent<HTMLSelectElement>)=>setLocalCustomer({...localCustomer,come:e.target.value as typeof come[number]})}
+                            value={localContact.copName?.name}
+
+                            onChange={(e:React.ChangeEvent<HTMLSelectElement>)=>setLocalContact({...localContact,copName:customersName.find(x=>x.name===e.target.value)})}
                             >
                                 <option></option>
                                 {
-                                    come.map(x=>
-                                        <option value={x}>{x}</option>
+                                    customersName.map(x=>
+                                        <option value={x.name}>{x.name}</option>
                                     )
                                 }
                             </select>
@@ -73,10 +80,10 @@ const CreateCustomer:React.FC<CreaateCustomerProp> = (props) => {
                     <div className="flex gap-8 ">
                         <div>
                             <p className="text-sm text-gray-500 mb-1">电话</p>
-                            <input value={localCustomer.phone} 
+                            <input value={localContact.phone} 
                             {...register("phone",{ pattern: /^[0-9]+$/i })} 
                             className={className}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalCustomer({...localCustomer,phone:e.target.value})}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalContact({...localContact,phone:e.target.value})}
                             />
                             <p className="text-sm text-red-500">
                             {errors.phone && <span>phone only in number</span>}
@@ -84,10 +91,10 @@ const CreateCustomer:React.FC<CreaateCustomerProp> = (props) => {
                         </div>
                         <div>
                             <p className="text-sm text-gray-500 mb-1">手机</p>
-                            <input value={localCustomer.mobilePhone} 
+                            <input value={localContact.mobilePhone} 
                             {...register("mobilePhone",{ pattern: /^[0-9]+$/i })} 
                             className={className}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalCustomer({...localCustomer,mobilePhone:e.target.value})}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalContact({...localContact,mobilePhone:e.target.value})}
                             />
                             <p className="text-sm text-red-500">
                             {errors.mobilePhone && <span>mobilePhone only in number</span>}
@@ -98,76 +105,63 @@ const CreateCustomer:React.FC<CreaateCustomerProp> = (props) => {
                     <div className="flex gap-8 ">
                         <div>
                             <p className="text-sm text-gray-500 mb-1">邮箱</p>
-                            <input value={localCustomer.email} 
+                            <input value={localContact.email} 
                             {...register("email",{ pattern:/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,})} 
                             className={className}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalCustomer({...localCustomer,email:e.target.value})}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalContact({...localContact,email:e.target.value})}
                             />
                             <p className="text-sm text-red-500">
                             {errors.email && <span>email pattern is wrong</span>}
                             </p>
                         </div>
                         <div>
-                            <p className="text-sm text-gray-500 mb-1">网址</p>
-                            <input value={localCustomer.url} 
+                            <p className="text-sm text-gray-500 mb-1">职位</p>
+                            <input value={localContact.jobTitle} 
                             className={className}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalCustomer({...localCustomer,url:e.target.value})}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalContact({...localContact,jobTitle:e.target.value})}
                             />
                         </div>      
                     </div>
 
                     <div className="flex gap-8 ">
                         <div>
-                            <p className="text-sm text-gray-500 mb-1">客户行业</p>
+                            <p className="text-sm text-gray-500 mb-1">性别</p>
                             <select className={className}
-                            value={localCustomer.industry}
-                            onChange={(e:React.ChangeEvent<HTMLSelectElement>)=>setLocalCustomer({...localCustomer,industry:e.target.value as typeof industry[number]})}
+                            value={localContact.gender}
+                            onChange={(e:React.ChangeEvent<HTMLSelectElement>)=>setLocalContact({...localContact,gender:e.target.value as typeof gender[number] })}
                             >
                                 <option></option>
                                 {
-                                    industry.map(x=>
+                                    gender.map(x=>
                                         <option value={x}>{x}</option>
                                     )
                                 }
                             </select>
                         </div>
                         <div>
-                            <p className="text-sm text-gray-500 mb-1">客户级别</p>
-                            <select className={`${className} `}
-                            value={localCustomer.level}
-                            onChange={(e:React.ChangeEvent<HTMLSelectElement>)=>setLocalCustomer({...localCustomer,level:e.target.value as typeof level[number]})}
-                            
-                            >
-                                <option></option>
-                                {
-                                    level.map(x=>
-                                        <option value={x}>{x}</option>
-                                    )
-                                }
-                            </select>
-                        </div>      
-                    </div>
-
-                    <div className="flex gap-8 ">
-                        <div>
                             <p className="text-sm text-gray-500 mb-1">地址</p>
-                            <input value={localCustomer.address} 
+                            <input value={localContact.address} 
                             className={className}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalCustomer({...localCustomer,address:e.target.value})}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalContact({...localContact,address:e.target.value})}
                             />
                            
                         </div>
+             
+                    </div>
+
+                    <div className="flex gap-8 ">
+                     
                         <div>
                             <p className="text-sm text-gray-500 mb-1">备注</p>
-                            <input value={localCustomer.remark} 
+                            <input value={localContact.remark} 
                             className={className}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalCustomer({...localCustomer,remark:e.target.value})}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setLocalContact({...localContact,remark:e.target.value})}
                             />
                         </div>      
                     </div>
                     {/* <div>
                         <p className="text-sm text-gray-500 mb-1">下次联系时间</p>
-                        <DatePicker className={className} selected={ localCustomer.nextTime} onChange={(date) =>date? setLocalCustomer({...localCustomer,nextTime:date}):console.log('1')} />
+                        <DatePicker className={className} selected={ localContact.nextTime} onChange={(date) =>date? setLocalContact({...localContact,nextTime:date}):console.log('1')} />
                     </div> */}
 
                 </div>
@@ -184,4 +178,4 @@ const CreateCustomer:React.FC<CreaateCustomerProp> = (props) => {
     )
 }
 
-export default CreateCustomer
+export default EditContact

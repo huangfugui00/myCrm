@@ -50,17 +50,30 @@ export type contactType={
     _id:string,
     name:string,
     copName?:customerType,
-    jobTitle:string,
+    jobTitle?:string,
     phone?:string,
     mobilePhone?:string,   
     email?:string,
     address?:string,
     remark?:string,
-    gender: genderType,
+    gender?: genderType,
     nextTime?:Date,
     [key: string]: any,
     principal?:userType,
 }
- 
+
+export type updateContactInput={
+    _id:string,
+    name:string,
+    copName?:string,
+    jobTitle?:string,
+    phone?:string,
+    mobilePhone?:string,   
+    email?:string,
+    address?:string,
+    remark?:string,
+    gender?: genderType,
+}
+
 export type columnsDataIndex = "name" | 'phone' | 'email' | 'url' | 'industry' | 'come' | 'mobilePhone' | "level" | 'nextTime' | 'principal' | 'address' | 'remark'
 
