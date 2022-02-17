@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import {IRootState} from 'store'
 import {useRouter} from 'next/router'
 import {ToastAlert} from '@/components/ToastAlert'
+import ModalLoading from '@/components/ModalLoading'
 
 const navLists=[
     {
@@ -28,13 +29,18 @@ type LayoutProp={
 
 const Layout:React.FC<LayoutProp> = (props) => {
     const authReducer = useSelector((state:IRootState) => state.authReducer)
+    const statusReducer = useSelector((state:IRootState) => state.statusReducer)
     const { token } = authReducer
+    const {loading} = statusReducer
     const router = useRouter()
     useEffect(() => {
         if(!token){
             router.push('/login')
         }
     }, [token])
+    if(loading){
+       return <ModalLoading loading={loading}></ModalLoading>
+    }
     return (
         <div>
             <StickyTop>

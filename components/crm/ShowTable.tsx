@@ -30,8 +30,8 @@ function tableCell(content:contentType,dataIndex:string){
         case 'principal':
             return content.principal?.username
         case 'copName':
-            console.log(content.copName.name)
-            return content.copName.name
+            console.log(content.copName?.name)
+            return content.copName?.name
         default:
             return content[dataIndex]
     }

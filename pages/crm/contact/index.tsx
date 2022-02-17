@@ -17,8 +17,10 @@ import ShowTable from '@/components/crm/ShowTable'
 import MyModal from '@/components/MyModal'
 import {toastAlert} from '@/components/ToastAlert'
 
-import {useSelector} from 'react-redux'
+import {useSelector,useDispatch} from 'react-redux'
 import {IRootState } from 'store'
+import ModalLoading from '@/components/ModalLoading'
+import {updateContactSer,createContactSer,deleteContactSer} from 'services/contactSer'
  
 
 const buttonItems=[
@@ -91,8 +93,11 @@ const columns=[
 
 
 const index = () => {
+    const dispath = useDispatch()
     const authReducer = useSelector((state:IRootState) => state.authReducer)
+    const [loading,setLoading] = useState(false)
     const [searchItem,setSearchItem] = useState<string>('')
+
     const [btnSelType,setBtnSelType] = useState('all')
     const [customersName,setCustomersName] = useState<customerType[]>([])
     const [contacts,setContacts] = useState<contactType[]>([])
@@ -104,10 +109,6 @@ const index = () => {
     // //右侧button组
     const contactsQuery =  useQuery(GET_CONTACTS)
     const customersNameQuery=  useQuery(GET_CUSTOMERS_NAME)
-   
-    const [deleteContact]  = useMutation(DELETE_CONTACT)
-    const [updateContact]  = useMutation(UPDATE_CONTACT)
-    const [createContact] = useMutation(CREATE_CONTACT)
 
     useEffect(() => {
       if(contactsQuery?.data){
@@ -166,36 +167,29 @@ const index = () => {
 
     const handleUpdate =async (contact:updateContactInput)=>{
         try{
-            await updateContact( {
-                variables:{...contact},
-            })
+            setLoading(true)
+            await updateContactSer(contact)
+            handleClose(false)
         }
         catch(err:any){
             toastAlert(err.message) 
         }
-        handleClose(false)
+        finally{
+            setLoading(false)
+        }
     }
 
     
 
     const handleCreate =async (contact:createContactInput)=>{
         try {
-            await createContact({
-                variables:{...contact},
-                update: (store, { data })=>{
-                    const contactData:any = store.readQuery({
-                        query: GET_CONTACTS
-                        });
-                    store.writeQuery({
-                        query: GET_CONTACTS,
-                        data: {
-                            getContacts: contactData.getContacts.concat(data.createContact)
-                        }
-                    });
-                }
-            })        
+            setLoading(true)
+            await createContactSer(contact)
         } catch (error:any) {
             toastAlert(error.message)             
+        }
+        finally{
+            setLoading(false)
         }
         handleOpenCreate(false)
     }
@@ -203,30 +197,24 @@ const index = () => {
     const handleDelete =async()=>{
         try{
             if(contactCheckedId){
+                setLoading(true)
                 console.log('delete contact')
-              await  deleteContact( {
-                    variables:{_id:contactCheckedId},
-                    update: (store, { data })=>{
-                        const contactData:any = store.readQuery({
-                            query: GET_CONTACTS
-                            });
-                        store.writeQuery({
-                            query: GET_CONTACTS,
-                            data: {
-                                getContacts: contactData.getContacts.filter((contact:any)=>contact._id!==data.deleteContact._id)
-                            }
-                        });
-                    }
-                })
+                await deleteContactSer(contactCheckedId)
             }
         }
         catch(err:any){
             toastAlert(err.message) 
         }
+        finally{
+            setLoading(false)
+        }
     }
    
    if(!contacts){
        return<></>
+   }
+   if(loading){
+       return <ModalLoading loading={loading}></ModalLoading>
    }
     // if (loading) return <p>Loading...</p>;
     // if (error) return <p>Error :(</p>;

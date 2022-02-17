@@ -6,20 +6,22 @@ import {IconButton} from '@mui/material'
 import SearchCustomer from '@/components/customers/SearchCustomer'
 import SelCustomer from '@/components/customers/SelCustomer'
 
-import {useQuery ,useMutation} from '@apollo/client';
+import {useQuery} from '@apollo/client';
 import {customerType} from  'utils/type'
-import {GET_CUSTOMERS,DELETE_CUSTOMER,UPDATE_CUSTOMER,CREATE_CUSTOMERS} from 'graphql/customer'
 import CustomerTable from '@/components/customers/CustomerTable'
 import EditCustomer from '@/components/customers/EditCustomer'
 import CreateCustomer from '@/components/customers/CreateCustomer'
 import MyModal from '@/components/MyModal'
 import {toastAlert} from '@/components/ToastAlert'
-
+import ModalLoading from '@/components/ModalLoading'
 import {useSelector} from 'react-redux'
 import {IRootState } from 'store'
+import {GET_CUSTOMERS} from 'graphql/customer'
+import {updateCustomerSer,createCustomerSer,deleteCustomerSer} from 'services/customerSer'
  
 const index = () => {
     const authReducer = useSelector((state:IRootState) => state.authReducer)
+    const [loading,setLoading] = useState(false)
     const [searchItem,setSearchItem] = useState<string>('')
     const [btnCustomerType,setBtnCustomerType] = useState<'all' | 'my' | 'subordinate' >('all')
     const [customers,setCustomers] = useState<customerType[]>([])
@@ -29,21 +31,15 @@ const index = () => {
     const [openCreate,handleOpenCreate] = useState(false)
 
     // //右侧button组
-    const { loading, data } =  useQuery(GET_CUSTOMERS)
    
-    const [deleteCustomer]  = useMutation(DELETE_CUSTOMER)
-    const [updateCustomer]  = useMutation(UPDATE_CUSTOMER)
-    const [createCustomer] = useMutation(CREATE_CUSTOMERS)
+    const customersQuery =useQuery(GET_CUSTOMERS)
 
     useEffect(() => {
-      if(data){
-        console.log(data)
-        let copyCustomers:customerType[] = data.getCustomers
-        setCustomers(copyCustomers)
-      }
-    }, [data])
-
-
+        if(customersQuery?.data){
+            let copyCustomers:customerType[] = customersQuery?.data.getCustomers
+            setCustomers(copyCustomers)
+        }
+    }, [customersQuery])
 
     //fetch数据或者search内容，客户类型更改触发，更改显示的客户
     useEffect(()=>{ 
@@ -73,8 +69,6 @@ const index = () => {
  
     
     const filterCustomType = (customer:customerType) :boolean=>{
-        console.log(customer.principal?._id)
-        console.log(authReducer.user._id)
         if(btnCustomerType==='all'){
             return true
         }
@@ -89,72 +83,50 @@ const index = () => {
 
     const handleUpdate =async (customer:customerType)=>{
         try{
-            await updateCustomer( {
-                variables:{...customer},
-            })
+            setLoading(true)
+            await updateCustomerSer(customer)
+            handleClose(false)
         }
         catch(err:any){
             toastAlert(err.message) 
         }
-        handleClose(false)
+        finally{
+            setLoading(false)
+        }
     }
 
     const handleCreate =async (customer:customerType)=>{
         try {
-            await createCustomer({
-                variables:{...customer},
-                update: (store, { data })=>{
-                    const customerData:any = store.readQuery({
-                        query: GET_CUSTOMERS
-                        });
-                    store.writeQuery({
-                        query: GET_CUSTOMERS,
-                        data: {
-                            getCustomers: customerData.getCustomers.concat(data.createCustomer)
-                        }
-                    });
-                }
-            })        
+            setLoading(true)
+            await createCustomerSer(customer)   
+            handleClose(false)
+            handleOpenCreate(false)
         } catch (error:any) {
             toastAlert(error.message)             
         }
-        handleOpenCreate(false)
-
-    
-
-        // handleUpdate(localCustomer)
+        finally{
+            setLoading(false)
+        }
     }
     
     const handleDelete =async()=>{
         try{
             if(customerCheckedId){
-                console.log('delete customer')
-              await  deleteCustomer( {
-                    variables:{_id:customerCheckedId},
-                    update: (store, { data })=>{
-                        const customerData:any = store.readQuery({
-                            query: GET_CUSTOMERS
-                            });
-                        store.writeQuery({
-                            query: GET_CUSTOMERS,
-                            data: {
-                                getCustomers: customerData.getCustomers.filter((customer:any)=>customer._id!==data.deleteCustomer._id)
-                            }
-                        });
-                    }
-                })
+                setLoading(true)
+                await deleteCustomerSer(customerCheckedId)
             }
         }
         catch(err:any){
             toastAlert(err.message) 
         }
+        finally{
+            setLoading(false)
+        }
     }
    
-   if(!customers){
-       return<></>
+   if(loading){
+       return  <ModalLoading loading={loading}/>
    }
-    if (loading) return <p>Loading...</p>;
-    // if (error) return <p>Error :(</p>;
    
    
     return (
