@@ -8,8 +8,7 @@ import {useMutation} from '@apollo/client';
 import { useDispatch, useSelector } from 'react-redux'
 import {IRootState} from 'store'
 import { loginAct } from 'actions/authAct'
-import ModalLoading from '@/components/ModalLoading'
-
+import {loadingAct,finishAct } from 'actions/statusAct'
 // import {userContext} from '../../App'
 // import userServices from '../../services/user'
 // import './login.scss'
@@ -33,6 +32,7 @@ const Login = () => {
 
     const onSubmit:SubmitHandler<Inputs>=async (data)=>{
         try{
+            await dispatch(loadingAct())
             const result= await loginSer( {
                  variables:{...data},
              })
@@ -44,13 +44,14 @@ const Login = () => {
         catch(err:any){
             toastAlert(err.message)
         } 
+        finally{
+            await dispatch(finishAct())
+        }
         
     }
     const className =" py-1 pl-1 rounded text-gray-500 bg-gray-100 text-sm outline-none border focus:border-blue-200 w-96"
 
-    if(loading){
-       return  <ModalLoading loading={loading}/>
-    }
+
     return (
         <div className="flex flex-row justify-center mt-24 items-center my-container">
             <form onSubmit={handleSubmit(onSubmit)} className="basis-1/4" >

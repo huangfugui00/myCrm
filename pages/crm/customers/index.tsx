@@ -13,15 +13,15 @@ import EditCustomer from '@/components/customers/EditCustomer'
 import CreateCustomer from '@/components/customers/CreateCustomer'
 import MyModal from '@/components/MyModal'
 import {toastAlert} from '@/components/ToastAlert'
-import ModalLoading from '@/components/ModalLoading'
-import {useSelector} from 'react-redux'
+import {useSelector,useDispatch} from 'react-redux'
+import {loadingAct,finishAct} from 'actions/statusAct'
 import {IRootState } from 'store'
 import {GET_CUSTOMERS} from 'graphql/customer'
 import {updateCustomerSer,createCustomerSer,deleteCustomerSer} from 'services/customerSer'
  
 const index = () => {
+    const dispatch=useDispatch()
     const authReducer = useSelector((state:IRootState) => state.authReducer)
-    const [loading,setLoading] = useState(false)
     const [searchItem,setSearchItem] = useState<string>('')
     const [btnCustomerType,setBtnCustomerType] = useState<'all' | 'my' | 'subordinate' >('all')
     const [customers,setCustomers] = useState<customerType[]>([])
@@ -83,7 +83,7 @@ const index = () => {
 
     const handleUpdate =async (customer:customerType)=>{
         try{
-            setLoading(true)
+            dispatch(loadingAct())
             await updateCustomerSer(customer)
             handleClose(false)
         }
@@ -91,13 +91,13 @@ const index = () => {
             toastAlert(err.message) 
         }
         finally{
-            setLoading(false)
+            dispatch(finishAct())
         }
     }
 
     const handleCreate =async (customer:customerType)=>{
         try {
-            setLoading(true)
+            dispatch(loadingAct())
             await createCustomerSer(customer)   
             handleClose(false)
             handleOpenCreate(false)
@@ -105,14 +105,14 @@ const index = () => {
             toastAlert(error.message)             
         }
         finally{
-            setLoading(false)
+            dispatch(finishAct())
         }
     }
     
     const handleDelete =async()=>{
         try{
             if(customerCheckedId){
-                setLoading(true)
+                dispatch(loadingAct())
                 await deleteCustomerSer(customerCheckedId)
             }
         }
@@ -120,14 +120,11 @@ const index = () => {
             toastAlert(err.message) 
         }
         finally{
-            setLoading(false)
+            dispatch(finishAct())
         }
     }
    
-   if(loading){
-       return  <ModalLoading loading={loading}/>
-   }
-   
+
    
     return (
         <div>
@@ -168,7 +165,6 @@ const index = () => {
                     <MyModal open={openCreate} handleClose={()=>handleOpenCreate(false)}>
                         <CreateCustomer handleCreate={handleCreate}/>
                     </MyModal>
-
                 </main>
             </Layout>
         </div>

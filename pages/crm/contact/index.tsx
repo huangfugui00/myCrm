@@ -19,7 +19,7 @@ import {toastAlert} from '@/components/ToastAlert'
 
 import {useSelector,useDispatch} from 'react-redux'
 import {IRootState } from 'store'
-import ModalLoading from '@/components/ModalLoading'
+import {loadingAct,finishAct} from 'actions/statusAct'
 import {updateContactSer,createContactSer,deleteContactSer} from 'services/contactSer'
  
 
@@ -93,9 +93,8 @@ const columns=[
 
 
 const index = () => {
-    const dispath = useDispatch()
+    const dispatch = useDispatch()
     const authReducer = useSelector((state:IRootState) => state.authReducer)
-    const [loading,setLoading] = useState(false)
     const [searchItem,setSearchItem] = useState<string>('')
 
     const [btnSelType,setBtnSelType] = useState('all')
@@ -167,7 +166,7 @@ const index = () => {
 
     const handleUpdate =async (contact:updateContactInput)=>{
         try{
-            setLoading(true)
+            dispatch(loadingAct())
             await updateContactSer(contact)
             handleClose(false)
         }
@@ -175,7 +174,7 @@ const index = () => {
             toastAlert(err.message) 
         }
         finally{
-            setLoading(false)
+            dispatch(finishAct())
         }
     }
 
@@ -183,13 +182,13 @@ const index = () => {
 
     const handleCreate =async (contact:createContactInput)=>{
         try {
-            setLoading(true)
+            dispatch(loadingAct())
             await createContactSer(contact)
         } catch (error:any) {
             toastAlert(error.message)             
         }
         finally{
-            setLoading(false)
+            dispatch(finishAct())
         }
         handleOpenCreate(false)
     }
@@ -197,7 +196,7 @@ const index = () => {
     const handleDelete =async()=>{
         try{
             if(contactCheckedId){
-                setLoading(true)
+                dispatch(loadingAct())
                 console.log('delete contact')
                 await deleteContactSer(contactCheckedId)
             }
@@ -206,16 +205,14 @@ const index = () => {
             toastAlert(err.message) 
         }
         finally{
-            setLoading(false)
+            dispatch(finishAct())
         }
     }
    
    if(!contacts){
        return<></>
    }
-   if(loading){
-       return <ModalLoading loading={loading}></ModalLoading>
-   }
+
     // if (loading) return <p>Loading...</p>;
     // if (error) return <p>Error :(</p>;
    
@@ -259,7 +256,6 @@ const index = () => {
                     <MyModal open={openCreate} handleClose={()=>handleOpenCreate(false)}>
                         <CreateContact customersName={customersName} handleCreate={handleCreate}/>
                     </MyModal>  
-
                 </main>
             </Layout>
         </div>

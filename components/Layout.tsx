@@ -38,9 +38,6 @@ const Layout:React.FC<LayoutProp> = (props) => {
             router.push('/login')
         }
     }, [token])
-    if(loading){
-       return <ModalLoading loading={loading}></ModalLoading>
-    }
     return (
         <div>
             <StickyTop>
@@ -51,6 +48,7 @@ const Layout:React.FC<LayoutProp> = (props) => {
             <div className="p-4">
             {props.children}
             </div>
+            <ModalLoading loading={loading}/>
             <ToastAlert/>        
         </div>
     )
