@@ -8,7 +8,7 @@ import {useMutation} from '@apollo/client';
 import { useDispatch, useSelector } from 'react-redux'
 import {IRootState} from 'store'
 import { loginAct } from 'actions/authAct'
-
+import ModalLoading from '@/components/ModalLoading'
 
 // import {userContext} from '../../App'
 // import userServices from '../../services/user'
@@ -28,7 +28,7 @@ const Login = () => {
         router.push('/crm/workbench')
     }
     
-    const [loginSer]  = useMutation(LOGIN)
+    const [loginSer,{loading}]  = useMutation(LOGIN)
     const { handleSubmit, register, formState: { errors },reset } = useForm<Inputs>();
 
     const onSubmit:SubmitHandler<Inputs>=async (data)=>{
@@ -38,7 +38,7 @@ const Login = () => {
              })
             const payload = result.data.login
            
-             dispatch(loginAct(payload))
+            await dispatch(loginAct(payload))
             router.push('/crm/workbench')
         }
         catch(err:any){
@@ -47,6 +47,10 @@ const Login = () => {
         
     }
     const className =" py-1 pl-1 rounded text-gray-500 bg-gray-100 text-sm outline-none border focus:border-blue-200 w-96"
+
+    if(loading){
+       return  <ModalLoading loading={loading}/>
+    }
     return (
         <div className="flex flex-row justify-center mt-24 items-center my-container">
             <form onSubmit={handleSubmit(onSubmit)} className="basis-1/4" >
