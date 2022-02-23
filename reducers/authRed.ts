@@ -10,7 +10,7 @@ const initState = {
     token:'',
     user:{
         _id:'',
-        username:'',
+        name:'',
         roles:[],
         email:''
     }

@@ -8,6 +8,7 @@ import ShowTable from '@/components/crm/ShowTable'
 import MyModal from '@/components/MyModal'
 import {toastAlert} from '@/components/ToastAlert'
 import EditContract from '@/components/contract/EditContract'
+import AddContract from '@/components/contract/AddContract'
 
 
 
@@ -188,7 +189,6 @@ const index = () => {
         try{
             if(contractCheckedId){
                 dispatch(loadingAct())
-                console.log('delete contract')
                 await deleteContractSer(contractCheckedId)
             }
         }
@@ -203,7 +203,6 @@ const index = () => {
    if(!contracts){
        return<></>
    }
-   console.log(contractsApi)
 
     return (
         <div>
@@ -238,6 +237,10 @@ const index = () => {
                     
                     <MyModal open={open} handleClose={()=>handleClose(false)}>
                         <EditContract contract={contractsApi.find(contract=>contract._id===contractCheckedId)} handleUpdate={handleUpdate} customersName={customersName}
+                        contacts={contacts}/>
+                    </MyModal>
+                    <MyModal open={openCreate} handleClose={()=>handleOpenCreate(false)}>
+                        <AddContract handleCreate={handleCreate} customersName={customersName}
                         contacts={contacts}/>
                     </MyModal>
                     {/*

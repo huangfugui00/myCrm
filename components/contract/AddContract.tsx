@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react'
-import {productType,contractType,contactType,customerType,updateContractInput} from 'utils/type'
+import {productType,contractType,contactType,customerType,createContractInput} from 'utils/type'
 import { useForm,SubmitHandler } from 'react-hook-form';
 import {CONTRACT_TYPE}  from 'utils/data'
 import {Table ,TableBody,TableHead,TableRow,TableCell,TablePagination}from '@mui/material';
@@ -7,11 +7,10 @@ import MyModal from '@/components/MyModal'
 import ProductTable from './ProductTable'
 import {PRODUCT_COLUMNS} from 'utils/data'
 
-type EditContractProp={
-    contract:contractType | undefined,
+type AddContractProp={
     customersName: customerType[],
     contacts:contactType[]
-    handleUpdate:(contact:updateContractInput)=>void
+    handleCreate:(contract:createContractInput)=>void
 }
 
 type Inputs = {
@@ -20,22 +19,25 @@ type Inputs = {
   };
 
 
-const EditContract:React.FC<EditContractProp> = (props) => {
-    const {contract,handleUpdate,customersName,contacts} = props
-    if(!contract){
-        return<></>
+const AddContract:React.FC<AddContractProp> = (props) => {
+    const {handleCreate,customersName,contacts} = props
+    const initContract = {
+        name:'',
+        _id:'',
+        products:[]
     }
-
-    const [localContract,setLocalContact]=useState(contract) 
+    const [localContract,setLocalContact]=useState<contractType>(initContract) 
     const [contactsInCop,setContactsInCop] = useState<contactType[]>(contacts)
     const [addProduct,setAddProduct] = useState(false)
 
     const className =" py-1 pl-1 rounded text-gray-500 bg-gray-100 text-sm outline-none border focus:border-blue-200 w-96"
+
     const {
         register,
         handleSubmit,
         formState: { errors },
       } = useForm<Inputs>();
+
 
     useEffect(() => {
         const filterContacts=contacts.filter(contact=>contact.copName?._id===localContract?.copName?._id)
@@ -62,13 +64,13 @@ const EditContract:React.FC<EditContractProp> = (props) => {
     }
     const onSubmit:SubmitHandler<Inputs>=(data)=>{
         const { signatory,cuSignatory,copName,products,...body} = localContract
-        const bodys = body as updateContractInput
+        const bodys = body as createContractInput
         if(products){
             bodys.products = products.map(product=>( {price:product.price,product:product.product,remark:product.remark} ))
         }
         bodys.copName = copName?._id
         bodys.cuSignatory = cuSignatory?._id
-        const result = handleUpdate(bodys)
+        const result = handleCreate(bodys)
     }
     if(!localContract){
         return<></>
@@ -78,7 +80,7 @@ const EditContract:React.FC<EditContractProp> = (props) => {
     <div className="bg-white p-8">
         {/* header  */}
         <div className="mb-8">
-            <h1 className="text-lg font-bold">编辑合同</h1>
+            <h1 className="text-lg font-bold">创建合同</h1>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} key='editContract'>
             <div className="flex flex-col gap-4">
@@ -189,7 +191,7 @@ const EditContract:React.FC<EditContractProp> = (props) => {
                     </p>
                 </div>
                 <MyModal open={addProduct} handleClose={()=>setAddProduct(false)}>
-                    <ProductTable addProductEvent={addProductEvent}  key="createProductTable"/>
+                    <ProductTable addProductEvent={addProductEvent} key="createProductTable"/>
                 </MyModal>
                 {/* 产品列表 */}
                 <div>
@@ -244,4 +246,4 @@ const EditContract:React.FC<EditContractProp> = (props) => {
     )
 }
 
-export default EditContract
+export default AddContract

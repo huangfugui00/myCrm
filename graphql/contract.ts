@@ -2,16 +2,40 @@
 import { gql} from '@apollo/client';
 
 export const CREATE_CONTRACT = gql`
-mutation createContract($name:String,$signatory:ID,$copName:ID,
-    $cuSignatory:ID,$price:Float,$contractType:String,
-    $remark:String,$disCount:Float,$products:[ProductInput]
-    ){
-    createContract(createInput:{name:$name,signatory:$signatory,copName:$copName,cuSignatory:$cuSignatory,
-    price:$price,remark:$remark,contractType:$contractType,disCount:$disCount,
-    products:$products}){
-        price,
-        name,
-    }
+mutation createContract($name:String,$copName:ID,
+  $cuSignatory:ID,$contractType:String,
+  $remark:String,$disCount:Float,$products:[ProductInput]
+  ){
+  createContract(createInput:{name:$name,copName:$copName,cuSignatory:$cuSignatory,
+  remark:$remark,contractType:$contractType,disCount:$disCount,
+  products:$products}){
+     _id
+      name
+      price
+      paid
+      unPaid
+      remark
+      disCount
+      contractType
+      products{
+        price
+        product
+        remark
+      }
+      copName{
+         name
+        _id
+      }
+      remark
+      cuSignatory{
+        _id
+        name
+      }
+      signatory {
+        _id
+        name
+     }
+  }
 }
 `
 
