@@ -1,4 +1,4 @@
-import {come,industry,level,gender} from './data'
+import {come,industry,level,gender,CONTRACT_TYPE,PRODUCT_COLUMNS} from './data'
 export type navItemType = {
     label:string,
     path:string,
@@ -10,7 +10,7 @@ export type profileType = {
 }
 
 export type userType = {
-    username:string,
+    name:string,
     _id:string,
     roles:string[],
     email:string,
@@ -26,6 +26,8 @@ type comeType = typeof come[number];
 type industryType = typeof industry[number]
 type levelType = typeof level[number]
 type genderType = typeof gender[number]
+type contractTypeType = typeof CONTRACT_TYPE[number]
+type productColumnType = typeof PRODUCT_COLUMNS[number]
 
 export type customerType={
     key: React.Key;
@@ -73,6 +75,39 @@ export type updateContactInput={
 export type createContactInput = {
     copName?:string,
 } & contactItemType
+
+
+export type productType={
+    [key: string]: any,
+    product:string,
+    price:number,
+    remark?:string,
+}
+
+export type contractItemType = {
+    name:string,
+    contractType?:contractTypeType,
+    remark?:string,
+    disCount?:number,
+    products?:productType[]
+}
+
+export type contractType = {
+    _id:string,
+    [key: string]: any,
+    price?:number,
+    copName?:customerType,
+    signatory?:userType,
+    cuSignatory?:contactType,
+} & contractItemType
+
+export type updateContractInput={
+    _id:string,
+    copName?:string,
+    cuSignatory?:string,
+} & contractItemType
+
+export type createContractInput = updateContractInput
 
 export type columnsDataIndex = "name" | 'phone' | 'email' | 'url' | 'industry' | 'come' | 'mobilePhone' | "level" | 'nextTime' | 'principal' | 'address' | 'remark'
 

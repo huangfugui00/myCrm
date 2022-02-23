@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react'
-import {customerType,contactType,columnsDataIndex} from  'utils/type'
+import {customerType,contactType,contractType,columnsDataIndex} from  'utils/type'
 // import {columns} from 'utils/data'
 
 import {Table ,TableBody,TableHead,TableRow,TableCell,TablePagination}from '@mui/material';
@@ -9,7 +9,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import {Checkbox} from '@mui/material'
 
 
-type  contentType = customerType | contactType
+type  contentType = customerType | contactType | contractType
 type  columnType = {title:string,dataIndex:string}
 
 type ShowTableProp<T extends contentType,C extends columnType>={
@@ -25,15 +25,16 @@ function isValidKey<T extends contentType>(key:string,obj: T){
 }
 
 function tableCell(content:contentType,dataIndex:string){
-    
-    switch(dataIndex){
-        case 'principal':
-            return content.principal?.username
-        case 'copName':
-            console.log(content.copName?.name)
-            return content.copName?.name
-        default:
-            return content[dataIndex]
+    console.log(dataIndex)
+    const objIndex=[ 'cuSignatory' , 'signatory' , 'copName']
+    if(objIndex.includes(dataIndex)){
+        return content[dataIndex]?.name
+    }
+    else if(dataIndex==='principal'){
+        return content.principal?.name
+    }
+    else{
+        return content[dataIndex]
     }
 }
 
@@ -41,7 +42,6 @@ function tableCell(content:contentType,dataIndex:string){
 function ShowTable<T extends contentType, C extends columnType>(props:ShowTableProp<T,C>){
     
     const {columns,contents,itemCheckId,handleClickCheckBox} = props
-    console.log(contents)
     const [conditionContents,setConditionContents] = useState<T[]>(contents) 
     const [displayContents,setDisplayContents] = useState<T[]>(contents)
     const [columnSort,setColumnSort] = useState<string>()
@@ -63,8 +63,8 @@ function ShowTable<T extends contentType, C extends columnType>(props:ShowTableP
         const decenSoftFunc = (a:T,b:T)=>{
             let value1,value2
             if(column==='principal'){
-                value1 = a[column]?.username
-                value2 = b[column]?.username
+                value1 = a[column]?.name
+                value2 = b[column]?.name
             }
             else{
                 if(column in a ){
@@ -89,8 +89,8 @@ function ShowTable<T extends contentType, C extends columnType>(props:ShowTableP
         const softFunc = (a:T,b:T)=>{
             let value1,value2
             if(column==='principal'){
-                value1 = a[column]?.username
-                value2 = b[column]?.username
+                value1 = a[column]?.name
+                value2 = b[column]?.name
             }
             else{
                 value1 = a[column]
@@ -150,15 +150,8 @@ function ShowTable<T extends contentType, C extends columnType>(props:ShowTableP
                             <TableCell className="border-r">
                                {tableCell(content,column.dataIndex)}
                             </TableCell> 
-                            // column.dataIndex==='principal' ?
-                            // <TableCell className="border-r">
-                            //     {content.principal?.username}
-                            // </TableCell>
-                            // :
-                            // <TableCell className="border-r">
-                            //    <p className="line-clamp-2"> {content[column.dataIndex]}</p>
-                            // </TableCell>
                             )
+                         
                         }
                     </TableRow>
                     ))}

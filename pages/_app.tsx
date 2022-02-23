@@ -3,6 +3,7 @@ import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import {
+  concat,
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
@@ -25,7 +26,7 @@ const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('token');
   // return the headers to the context so httpLink can read them
   return {
-    headers: {
+    headers: {  
       ...headers,
       authorization: token ? `Bearer ${token}` : "",
     }
@@ -33,7 +34,7 @@ const authLink = setContext((_, { headers }) => {
 });
 
 export const client = new ApolloClient({ 
-              link: authLink.concat(httpLink),
+              link:concat(authLink, httpLink),
               cache: new InMemoryCache()
               });
 

@@ -33,6 +33,7 @@ const index = () => {
     // //右侧button组
    
     const customersQuery =useQuery(GET_CUSTOMERS)
+                
 
     useEffect(() => {
         if(customersQuery?.data){
@@ -73,10 +74,10 @@ const index = () => {
             return true
         }
         if(btnCustomerType==='my'){
-            return customer.principal?.username===authReducer.user.username
+            return customer.principal?.name===authReducer.user.name
         }
         if(btnCustomerType==='subordinate'){
-            return customer.principal?.username!==authReducer.user.username
+            return customer.principal?.name!==authReducer.user.name
         }
         return false
     }

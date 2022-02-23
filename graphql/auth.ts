@@ -8,7 +8,7 @@ mutation login($email:String!,$password:String!){
         _id
         roles
         email
-        username
+        name
       }
     }
   }

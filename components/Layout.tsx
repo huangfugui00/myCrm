@@ -20,6 +20,10 @@ const navLists=[
         label:'联系人',
         path:'/crm/contact',
     },
+    {
+        label:'合同',
+        path:'/crm/contract',
+    },
 ]
 
 

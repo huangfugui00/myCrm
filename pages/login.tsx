@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import {IRootState} from 'store'
 import { loginAct } from 'actions/authAct'
 import {loadingAct,finishAct } from 'actions/statusAct'
+import ModalLoading from '@/components/ModalLoading'
 // import {userContext} from '../../App'
 // import userServices from '../../services/user'
 // import './login.scss'
@@ -22,12 +23,14 @@ const Login = () => {
     const router = useRouter()
     const dispatch = useDispatch()
     const authReducer = useSelector((state:IRootState) => state.authReducer)
+    const statusReducer = useSelector((state:IRootState) => state.statusReducer)
+    const {loading} = statusReducer
     const { token } = authReducer
     if(token){
         router.push('/crm/workbench')
     }
     
-    const [loginSer,{loading}]  = useMutation(LOGIN)
+    const [loginSer]  = useMutation(LOGIN)
     const { handleSubmit, register, formState: { errors },reset } = useForm<Inputs>();
 
     const onSubmit:SubmitHandler<Inputs>=async (data)=>{
@@ -86,6 +89,7 @@ const Login = () => {
             <div className="basis-2/4">
             <Logo/>              
             </div>
+            <ModalLoading loading={loading}/>
             <ToastAlert/>          
         </div>
     )

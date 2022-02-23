@@ -28,7 +28,7 @@ export const GET_CUSTOMERS = gql`
             address
             remark
             principal {
-                username
+                name
            }
         }
     }
@@ -78,7 +78,7 @@ mutation updateCustomer($_id:ID!,$name:String,$phone:String,$come:String,
               address
               remark
               principal {
-                  username
+                  name
               }
   }
 }

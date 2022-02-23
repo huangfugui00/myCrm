@@ -46,8 +46,8 @@ const CustomerTable:React.FC<CustomerTableProp<customerType>> = (props) => {
         const decenSoftFunc = (a:customerType,b:customerType)=>{
             let value1,value2
             if(column==='principal'){
-                value1 = a[column]?.username
-                value2 = b[column]?.username
+                value1 = a[column]?.name
+                value2 = b[column]?.name
             }
             else{
                 value1 = a[column]
@@ -70,8 +70,8 @@ const CustomerTable:React.FC<CustomerTableProp<customerType>> = (props) => {
         const softFunc = (a:customerType,b:customerType)=>{
             let value1,value2
             if(column==='principal'){
-                value1 = a[column]?.username
-                value2 = b[column]?.username
+                value1 = a[column]?.name
+                value2 = b[column]?.name
             }
             else{
                 value1 = a[column]
@@ -138,7 +138,7 @@ const CustomerTable:React.FC<CustomerTableProp<customerType>> = (props) => {
                         <TableCell className="border-r">{customer.mobilePhone}</TableCell>
                         <TableCell className="border-r">{customer.level}</TableCell>
                         <TableCell className="border-r">{customer.nextTime?moment(customer.nextTime).format('MMM DD, YYYY'):''}</TableCell>
-                        <TableCell className="border-r">{customer.principal?.username}</TableCell>
+                        <TableCell className="border-r">{customer.principal?.name}</TableCell>
                         <TableCell className="border-r">{customer.address}</TableCell>
                         <TableCell className="border-r">{customer.remark}</TableCell>
                     </TableRow>

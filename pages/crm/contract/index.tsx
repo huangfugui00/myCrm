@@ -1,47 +1,46 @@
-
 import React,{useState,useEffect} from 'react'
 import Layout from '@/components/Layout'
-import DehazeIcon from '@mui/icons-material/Dehaze'; 
 import {IconButton} from '@mui/material'
+import DehazeIcon from '@mui/icons-material/Dehaze'; 
 import SearchItem from '@/components/crm/SearchItem'
 import SelButtons from '@/components/crm/SelButtons'
-
-import {useQuery } from '@apollo/client';
-import {contactType,customerType,updateContactInput,createContactInput} from  'utils/type'
-import {GET_CONTACTS} from 'graphql/contact'
-import {GET_CUSTOMERS_NAME} from 'graphql/customer'
-import CreateContact from '@/components/contact/CreateContact'
-import EditContact from '@/components/contact/EditContact'
 import ShowTable from '@/components/crm/ShowTable'
-// import CreateTable from '@/components/crm/CreateTable'
 import MyModal from '@/components/MyModal'
 import {toastAlert} from '@/components/ToastAlert'
+import EditContract from '@/components/contract/EditContract'
 
+
+
+import {GET_CONTRACTS} from 'graphql/contract'
+import {GET_CUSTOMERS_NAME} from 'graphql/customer'
+import {GET_CONTACTS} from 'graphql/contact'
+import {useQuery } from '@apollo/client';
 import {useSelector,useDispatch} from 'react-redux'
 import {IRootState } from 'store'
 import {loadingAct,finishAct} from 'actions/statusAct'
-import {updateContactSer,createContactSer,deleteContactSer} from 'services/contactSer'
+import {updateContractSer,createContractSer,deleteContractSer} from 'services/contractSer'
+import {customerType,contactType,contractType,updateContractInput,createContractInput} from 'utils/type'
  
 
 const buttonItems=[
     {
         keyName:'all',
-        buttonName:'全部联系人'
+        buttonName:'全部合同'
     },
     {
         keyName:'my',
-        buttonName:'我负责的联系人'
+        buttonName:'我负责的合同'
     },
     {
         keyName:'subordinate',
-        buttonName:'下属负责的联系人'
+        buttonName:'下属负责的合同'
     },
 ]
 
 
 const columns=[
     {
-      title: '姓名',
+      title: '合同名称',
       dataIndex: 'name',
     },
     {
@@ -49,50 +48,38 @@ const columns=[
       dataIndex: 'copName',
     },
     {
-      title: '邮箱',
-      dataIndex: 'email',
-     
-    },
-    
-    {
-        title:'职务',
-        dataIndex:'jobTitle',
-      
+      title: '合同金额',
+      dataIndex: 'price',
     },
     {
-        title:'性别',
-        dataIndex:'gender',
-    
+        title: '已回款金额',
+        dataIndex: 'paid',
     },
     {
-        title:'手机',
-        dataIndex:'mobilePhone',
+        title: '未收回金额',
+        dataIndex: 'unPaid',
     },
     {
-        title:'电话',
-        dataIndex:'phone',
+        title:'客户签约人',
+        dataIndex:'cuSignatory',
     },
     {
-        title:'下次联系时间',
-        dataIndex:'nextTime',
-        
-    },
-    {
-        title:'负责人',
-        dataIndex:'principal',
-    },
-    {
-        title:'地址',
-        dataIndex:'address',
+        title:'签约人',
+        dataIndex:'signatory',
     },
     {
         title:'备注',
         dataIndex:'remark',
-    }
+    },
+    {
+        title:'合同类型',
+        dataIndex:'contractType',
+    },
   ];
 
 
 const index = () => {
+
     const dispatch = useDispatch()
     const authReducer = useSelector((state:IRootState) => state.authReducer)
     const [searchItem,setSearchItem] = useState<string>('')
@@ -100,44 +87,50 @@ const index = () => {
     const [btnSelType,setBtnSelType] = useState('all')
     const [customersName,setCustomersName] = useState<customerType[]>([])
     const [contacts,setContacts] = useState<contactType[]>([])
-    const [contactsApi,setContactsApi] = useState<contactType[]>([])
-    const [contactCheckedId,setContactCheckedId] = useState('')
+    const [contracts,setContracts] = useState<contractType[]>([])
+    const [contractsApi,setContractsApi] = useState<contractType[]>([])
+    const [contractCheckedId,setContractCheckedId] = useState('')
     const [open,handleClose] = useState(false)
     const [openCreate,handleOpenCreate] = useState(false)
 
-    // //右侧button组
+    const contractsQuery =  useQuery(GET_CONTRACTS)
     const contactsQuery =  useQuery(GET_CONTACTS)
     const customersNameQuery=  useQuery(GET_CUSTOMERS_NAME)
+    
+    useEffect(() => {
+        if(contractsQuery?.data){
+          let copyContracts:contractType[] = contractsQuery.data.getContracts
+          setContracts(copyContracts)
+        }
+      }, [contractsQuery])
 
     useEffect(() => {
-      if(contactsQuery?.data){
-        let copyContacts:contactType[] = contactsQuery.data.getContacts
-        setContacts(copyContacts)
-      }
+        if(contactsQuery?.data){
+            let copyContacts:contactType[] = contactsQuery.data.getContacts
+            setContacts(copyContacts)
+          }
     }, [contactsQuery])
 
     useEffect(() => {
         if(customersNameQuery?.data){
-          let customersName:customerType[] = customersNameQuery.data.getCustomers
-          setCustomersName(customersName)
+        let customersName:customerType[] = customersNameQuery.data.getCustomers
+        setCustomersName(customersName)
         }
-      }, [customersNameQuery])
-
-
-    //fetch数据或者search内容，客户类型更改触发，更改显示的客户
+    }, [customersNameQuery])
     useEffect(()=>{ 
-        let copyContacts = contacts
-        copyContacts = copyContacts.filter((contact)=>contact.phone?.includes(searchItem) || contact.name?.includes(searchItem) || contact.email?.includes(searchItem) || contact.mobilePhone?.includes(searchItem))
-        copyContacts = copyContacts.filter((contact)=>filterCustomType(contact))
-        setContactsApi(copyContacts)
-    },[contacts,searchItem,btnSelType])
-    
+        let copyContracts = contracts
+        copyContracts = copyContracts.filter((contract)=>contract.name?.includes(searchItem) || contract.copName?.name.includes(searchItem))
+        copyContracts = copyContracts.filter((contract)=>filterCustomType(contract))
+
+        setContractsApi(copyContracts)
+    },[contracts,searchItem,btnSelType])
+
     const handleClickCheckBox=(id:string)=>{
-        if(contactCheckedId===id){
-            setContactCheckedId('')
+        if(contractCheckedId===id){
+            setContractCheckedId('')
         }
         else{
-            setContactCheckedId(id)
+            setContractCheckedId(id)
         }
     }
 
@@ -149,25 +142,24 @@ const index = () => {
             setBtnSelType(nextBtnSelType)
         }
     }
- 
     
-    const filterCustomType = (contact:contactType) :boolean=>{
+    const filterCustomType = (contract:contractType) :boolean=>{
         if(btnSelType==='all'){
             return true
         }
         if(btnSelType==='my'){
-            return contact.principal?.name===authReducer.user.name
+            return contract.signatory?.name===authReducer.user.name
         }
         if(btnSelType==='subordinate'){
-            return contact.principal?.name!==authReducer.user.name
+            return contract.signatory?.name!==authReducer.user.name
         }
         return false
     }
 
-    const handleUpdate =async (contact:updateContactInput)=>{
+    const handleUpdate =async (contract:updateContractInput)=>{
         try{
             dispatch(loadingAct())
-            await updateContactSer(contact)
+            await updateContractSer(contract)
             handleClose(false)
         }
         catch(err:any){
@@ -179,11 +171,10 @@ const index = () => {
     }
 
     
-
-    const handleCreate =async (contact:createContactInput)=>{
+    const handleCreate =async (contract:createContractInput)=>{
         try {
             dispatch(loadingAct())
-            await createContactSer(contact)
+            await createContractSer(contract)
         } catch (error:any) {
             toastAlert(error.message)             
         }
@@ -195,10 +186,10 @@ const index = () => {
     
     const handleDelete =async()=>{
         try{
-            if(contactCheckedId){
+            if(contractCheckedId){
                 dispatch(loadingAct())
-                console.log('delete contact')
-                await deleteContactSer(contactCheckedId)
+                console.log('delete contract')
+                await deleteContractSer(contractCheckedId)
             }
         }
         catch(err:any){
@@ -209,23 +200,19 @@ const index = () => {
         }
     }
    
-   if(!contacts){
+   if(!contracts){
        return<></>
    }
+   console.log(contractsApi)
 
-    // if (loading) return <p>Loading...</p>;
-    // if (error) return <p>Error :(</p>;
-   
-   
     return (
         <div>
-            <Layout>
+             <Layout>
                 <main>
-
-                    <div className=" flex justify-between">
-                        <span className="text-2xl">联系人管理</span>
+                <div className=" flex justify-between">
+                        <span className="text-2xl">合同管理</span>
                         <div className="flex  items-center">
-                        <button onClick={()=>handleOpenCreate(true)} className="bg-primary-color text-white text-sm px-3 py-2 rounded">新建联系人</button>
+                        <button onClick={()=>handleOpenCreate(true)} className="bg-primary-color text-white text-sm px-3 py-2 rounded">新建合同</button>
                         <IconButton>
                             <DehazeIcon/>
                         </IconButton>
@@ -234,28 +221,30 @@ const index = () => {
                     
                     <div className="mt-6">
                         {
-                        contactCheckedId?
+                        contractCheckedId?
                         <div className="flex items-center gap-2 h-9">
                             <button onClick={()=>handleClose(true)} className="bg-primary-color text-white text-sm px-3 py-2 rounded">编辑</button>
                             <button onClick={()=>handleDelete()} className="bg-danger-color  text-white text-sm px-3 py-2 rounded">删除</button>
                         </div>
                         :
                         <div className=" flex  justify-between">
-                        <SearchItem placeholder='联系人名称/手机/电话' value={searchItem} setValue={setSearchItem}/>
+                        <SearchItem placeholder='合同/客户名称' value={searchItem} setValue={setSearchItem}/>
                         <SelButtons items={buttonItems} keyName={btnSelType} handleBtnClick={handleBtnClick}/>
                         </div>
                         }
                     </div>
 
-                    <ShowTable columns={columns} contents={contactsApi} handleClickCheckBox={handleClickCheckBox} itemCheckId={contactCheckedId}/>
+                    <ShowTable columns={columns} contents={contractsApi} handleClickCheckBox={handleClickCheckBox} itemCheckId={contractCheckedId}/>
                     
                     <MyModal open={open} handleClose={()=>handleClose(false)}>
-                        <EditContact contact={contactsApi.find(contact=>contact._id===contactCheckedId)} handleUpdate={handleUpdate} customersName={customersName}/>
+                        <EditContract contract={contractsApi.find(contract=>contract._id===contractCheckedId)} handleUpdate={handleUpdate} customersName={customersName}
+                        contacts={contacts}/>
                     </MyModal>
-                   
+                    {/*
                     <MyModal open={openCreate} handleClose={()=>handleOpenCreate(false)}>
-                        <CreateContact customersName={customersName} handleCreate={handleCreate}/>
-                    </MyModal>  
+                        <CreateContract customersName={customersName} handleCreate={handleCreate}/>
+                    </MyModal>   */}
+
                 </main>
             </Layout>
         </div>
@@ -263,4 +252,3 @@ const index = () => {
 }
 
 export default index
-

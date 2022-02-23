@@ -28,11 +28,13 @@ export const GET_CONTACTS=gql`
             nextTime
             copName{
                 name
+                _id
             }
             address
             remark
             principal {
-                username
+                _id
+                name
         }
         }
     }
@@ -60,7 +62,7 @@ mutation updateContact($_id:ID!,$name:String,$phone:String,$copName:ID,
     address
     remark
     principal {
-        username
+        name
 }
   }
 }
