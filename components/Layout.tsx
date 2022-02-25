@@ -24,6 +24,10 @@ const navLists=[
         label:'合同',
         path:'/crm/contract',
     },
+    {
+        label:'回款',
+        path:'/crm/refund',
+    },
 ]
 
 

@@ -79,3 +79,4 @@ export const industry = ['金融业','IT','房地产','商业服务','政府','�
 export const level = ['A(重点)' , 'B(普通客户)' , 'C(非优先客户)'] as const
 export const gender = ['男' , '女'] as const
 export const CONTRACT_TYPE = ['直销','代销','服务','快销'] as const
+export const REFUND_TYPE = ['支付宝','微信','银行转账','境外汇款','现金'] as const

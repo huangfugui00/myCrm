@@ -107,6 +107,35 @@ export type updateContractInput={
     cuSignatory?:string,
 } & contractItemType
 
+export type refundItemType={
+    refundPrice:number,
+    refundDate?:Date,
+    refundType?:string,
+    remark?:string,
+    contractPrice?:number,
+}
+
+export type refundType={
+    _id:string,
+    copName?:customerType,
+    contract?:contractType,
+    principal?:userType,
+    [key: string]: any,
+} & refundItemType
+
+export type createRefundInput={
+    copName?:string,
+    contract?:string,
+    principal?:string,
+}& refundItemType
+
+export type updateRefundInput={
+    _id:string,
+    copName?:string,
+    contract?:string,
+    principal?:string,
+}& refundItemType
+
 export type createContractInput = updateContractInput
 
 export type columnsDataIndex = "name" | 'phone' | 'email' | 'url' | 'industry' | 'come' | 'mobilePhone' | "level" | 'nextTime' | 'principal' | 'address' | 'remark'

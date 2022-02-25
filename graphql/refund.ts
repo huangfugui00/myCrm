@@ -14,6 +14,7 @@ mutation createRefund($copName:ID!,$contract:ID!,
         name
       }
       contract{
+        _id
         price
         name
       }

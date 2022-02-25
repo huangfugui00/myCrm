@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react'
-import {customerType,contactType,contractType,columnsDataIndex} from  'utils/type'
+import {customerType,contactType,contractType,refundType} from  'utils/type'
 // import {columns} from 'utils/data'
 
 import {Table ,TableBody,TableHead,TableRow,TableCell,TablePagination}from '@mui/material';
@@ -9,7 +9,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import {Checkbox} from '@mui/material'
 
 
-type  contentType = customerType | contactType | contractType
+type  contentType = customerType | contactType | contractType | refundType
 type  columnType = {title:string,dataIndex:string}
 
 type ShowTableProp<T extends contentType,C extends columnType>={
@@ -26,12 +26,9 @@ function isValidKey<T extends contentType>(key:string,obj: T){
 
 function tableCell(content:contentType,dataIndex:string){
     console.log(dataIndex)
-    const objIndex=[ 'cuSignatory' , 'signatory' , 'copName']
+    const objIndex=[ 'cuSignatory' , 'signatory' , 'copName','principal','contract']
     if(objIndex.includes(dataIndex)){
         return content[dataIndex]?.name
-    }
-    else if(dataIndex==='principal'){
-        return content.principal?.name
     }
     else{
         return content[dataIndex]
