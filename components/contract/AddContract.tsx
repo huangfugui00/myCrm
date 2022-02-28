@@ -24,6 +24,8 @@ const AddContract:React.FC<AddContractProp> = (props) => {
     const initContract = {
         name:'',
         _id:'',
+        price:0,
+        paid:0,
         products:[]
     }
     const [localContract,setLocalContact]=useState<contractType>(initContract) 

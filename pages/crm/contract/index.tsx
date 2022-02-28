@@ -9,6 +9,7 @@ import MyModal from '@/components/MyModal'
 import {toastAlert} from '@/components/ToastAlert'
 import EditContract from '@/components/contract/EditContract'
 import AddContract from '@/components/contract/AddContract'
+import ContractSummary from '@/components/contract/ContractSummary'
 
 
 
@@ -234,7 +235,9 @@ const index = () => {
                     </div>
 
                     <ShowTable columns={columns} contents={contractsApi} handleClickCheckBox={handleClickCheckBox} itemCheckId={contractCheckedId}/>
-                    
+                    <div className="-mt-8">
+                        <ContractSummary contracts={contracts}/>  
+                    </div>
                     <MyModal open={open} handleClose={()=>handleClose(false)}>
                         <EditContract contract={contractsApi.find(contract=>contract._id===contractCheckedId)} handleUpdate={handleUpdate} customersName={customersName}
                         contacts={contacts}/>

@@ -95,10 +95,12 @@ export type contractItemType = {
 export type contractType = {
     _id:string,
     [key: string]: any,
-    price?:number,
+    price:number,
     copName?:customerType,
     signatory?:userType,
     cuSignatory?:contactType,
+    paid:number,
+    unPaid?:number,
 } & contractItemType
 
 export type updateContractInput={
