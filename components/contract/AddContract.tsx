@@ -44,6 +44,15 @@ const AddContract:React.FC<AddContractProp> = (props) => {
         setContactsInCop(filterContacts)
     }, [localContract?.copName])
 
+    useEffect(()=>{
+        if(localContract&&localContract.disCount&&localContract.products){
+            let price = localContract?.products?.reduce((total,product)=>total+Math.round(product.price),0)
+            price=price*localContract?.disCount/100
+            setLocalContact({...localContract,price:price})
+        }
+
+    },[localContract.disCount,localContract.products])
+
     const deleteProductEvent =(deleteProduct:productType)=>{
         let copyContract = localContract
         if(copyContract&&copyContract.products){

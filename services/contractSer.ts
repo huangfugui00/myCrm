@@ -1,5 +1,6 @@
 import {client} from 'pages/_app'
 import {GET_CONTRACTS,UPDATE_CONTRACT,CREATE_CONTRACT,DELETE_CONTRACT} from 'graphql/contract'
+import {GET_REFUNDS} from 'graphql/refund'
 import {updateContractInput,createContractInput} from 'utils/type'
 
 export const updateContractSer = async(contract:updateContractInput)=>{
@@ -46,7 +47,8 @@ export const deleteContractSer = async(_id:string) =>{
                     getContracts: contractData.getContracts.filter((contract:any)=>contract._id!==data.deleteContract._id)
                 }
             });
-        }
+        },
+        refetchQueries:[ { query: GET_REFUNDS }]
     })
 }
 
