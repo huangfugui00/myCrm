@@ -1,5 +1,5 @@
-import React from 'react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import React,{useState} from 'react'
+import {BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const data = [
     {
@@ -45,17 +45,21 @@ const data = [
       amt: 2100,
     },
   ];
+
 const ContractFinishCurve = () => {
+
+
+    const [chartType, setChartType] = useState<'Line' | 'Bar'>('Line')
     return (
         <div className="mt-4 border border-t-primary-color border-t-4 p-4 ">
             <div className="flex justify-between">
                 <p className="font-bold">合同金额完成情况</p>
                 {/* chart type */}
                 <div className='bg-second-color flex '>
-                   <button className="text-sm text-gray-500 p-2">
+                   <button className={`text-sm text-gray-500 p-2 ${chartType==='Line'&&'text-white bg-primary-color'}`} onClick={()=>setChartType('Line')}>
                         折线图
                    </button>
-                   <button className="text-white bg-primary-color text-sm text-gray-500 p-2">
+                   <button className={`text-sm text-gray-500 p-2 ${chartType==='Bar'&&'text-white bg-primary-color'}`}  onClick={()=>setChartType('Bar')}>
                         柱状图
                    </button>
                 </div>
@@ -76,6 +80,8 @@ const ContractFinishCurve = () => {
             <div className=' h-[36rem] mt-4'>
 
             <ResponsiveContainer width="100%" height="100%">
+              {
+                chartType==='Line'?
                 <LineChart width={500} height={500} data={data}
                  margin={{
                     top: 5,
@@ -90,8 +96,27 @@ const ContractFinishCurve = () => {
                 <YAxis />
                 <Tooltip />   
                 {/* <Legend /> */}
-                    <Line type="monotone" dataKey="pv" stroke="#1d49cd" strokeWidth={5}/>
+                    <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeWidth={5}/>
                 </LineChart>
+                :
+                <BarChart width={500} height={500} data={data}
+                 margin={{
+                    top: 5,
+                    // right: 30,
+                    // left: 20,
+                    bottom: 5,
+                  }}>
+                    
+        
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />   
+                {/* <Legend /> */}
+                    <Bar type="monotone" dataKey="pv" fill="#1d49cd" strokeWidth={5} barSize={50}/>
+                </BarChart>
+              }
+                
             </ResponsiveContainer>   
             </div>
 

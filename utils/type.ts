@@ -138,6 +138,12 @@ export type updateRefundInput={
     principal?:string,
 }& refundItemType
 
+export type saleSummaryType={
+    name:string,
+    price:number | undefined,
+    mount:number | undefined
+}
+
 export type createContractInput = updateContractInput
 
 export type columnsDataIndex = "name" | 'phone' | 'email' | 'url' | 'industry' | 'come' | 'mobilePhone' | "level" | 'nextTime' | 'principal' | 'address' | 'remark'

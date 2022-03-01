@@ -13,7 +13,7 @@ const SaleChange = () => {
                     </div>
 
                     <div className="grid  grid-cols-5 gap-2 mt-4">
-                        <NewComponent title="新增客户" suffix="人" changeNum={100} cycle="上月" changeRate={50}/>
+                        <NewComponent title="新增客户" suffix="人" changeNum={100} cycle="上月" changeRate={50} />
                         <NewComponent title="新增联系人" suffix="人" changeNum={100} cycle="上月" changeRate={50}/>
                         <NewComponent title="新增合同" suffix="个" changeNum={100} cycle="上月" changeRate={50}/>
                         <NewComponent title="合同金额" suffix="元" changeNum={100} cycle="上月" changeRate={50}/>
